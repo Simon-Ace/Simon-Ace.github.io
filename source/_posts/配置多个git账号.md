@@ -1,11 +1,13 @@
 ---
-title: 配置多个git账号
+type: blog
+title: 一台电脑配置多个git账号
+date: 2019-10-14
+categories: 教程
+tags: git
+cover: false
+meta:
+  date: false
 ---
-
-
-
-# 配置多个git账号
-
 ## 1 清除git全局设置
 
 如果配置第一个账号的时候使用`git config --global`设置过，就先要取消掉，否则两个账号肯定会冲突
@@ -16,7 +18,7 @@ git config --global --unset user.name
 git config --global --unset user.email
 ```
 
-
+<!-- more -->
 
 ## 2 生成新账号的SSH keys
 
