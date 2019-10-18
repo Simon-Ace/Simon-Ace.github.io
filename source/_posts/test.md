@@ -1,17 +1,17 @@
 ---
-type: blog
-title: Hexo多台电脑同步
-date: 2019-10-16
-categories: 教程
-tags: Hexo
-cover: false
-meta:
-  date: false
+layout:     post
+date:       2017-07-05
+title:      [转]如何搭建基于Hexo的独立博客
+categories: [Dev, Hexo]
+tags:
+  - Hexo
+author:
+  name: xaoxuu
+  avatar: https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/avatar/avatar.png
+  url: https://xaoxuu.com
+permalink: https://xaoxuu.com/blog/2017-07-05-hexo-blog/
 ---
 
-如果换了电脑该如何同步Hexo的源文件？把hexo文件从一个电脑cope到另外一个电脑吗？答案肯定不是这样的，因为这里面有好多依赖包，好几万个文件呢，这样显然不合理。
+![](https://img.vim-cn.com/d9/a9af7dc49fc0af8ca3e6dd2450a2f7095a87db.png)
 
-本文提供一种多台电脑同步源文件的方法。
-
-<!-- more -->
-
+<!--more-->
