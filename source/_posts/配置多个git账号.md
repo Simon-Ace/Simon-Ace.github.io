@@ -75,8 +75,8 @@ IdentityFile ~/.ssh/id_rsa_me	#私钥路径，若写错会连接失败
 文件`id_rsa.pub`中保存的就是 ssh 公钥
 
 ```shell
-pbcopy < ~/.ssh/id_rsa
-pbcopy < ~/.ssh/id_rsa_me
+pbcopy < ~/.ssh/id_rsa.pub
+pbcopy < ~/.ssh/id_rsa_me.pub
 ```
 
 在 github 网站中添加该 ssh 公钥
@@ -93,12 +93,13 @@ Hi xxx! You've successfully authenticated, but GitHub does not provide shell acc
 
 
 
-参考链接：
+> 参考链接：
+>
+> 配置多个git账号的ssh密钥 - 掘金
+> https://juejin.im/post/5befe84d51882557795cc8f9
+>
+> 
+>
+> 同一台电脑配置多个git账号 · Issue #2 · jawil/notes
+> https://github.com/jawil/notes/issues/2
 
-配置多个git账号的ssh密钥 - 掘金
-https://juejin.im/post/5befe84d51882557795cc8f9
-
-
-
-同一台电脑配置多个git账号 · Issue #2 · jawil/notes
-https://github.com/jawil/notes/issues/2
