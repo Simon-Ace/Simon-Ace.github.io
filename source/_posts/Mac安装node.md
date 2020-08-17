@@ -2,7 +2,7 @@
 type: blog
 title: Mac安装node
 date: 2020-07-10
-categories: Python
+categories: 教程
 tags: 教程
 cover: false
 meta:
