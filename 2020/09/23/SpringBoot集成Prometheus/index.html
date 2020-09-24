@@ -342,7 +342,34 @@
 <ul>
 <li>点击 <code>Insert metric at cursor</code> ，即可选择监控指标；点击 <code>Graph</code> ，即可让指标以图表方式展示；点击<code>Execute</code> 按钮，即可看到指标图</li>
 </ul>
-<h2 id="三、自定义监控指标"><a href="#三、自定义监控指标" class="headerlink" title="三、自定义监控指标"></a>三、自定义监控指标</h2><p>1、创建 Prometheus 监控管理类<code>PrometheusCustomMonitor</code></p>
+<h2 id="三、Grafana-安装和配置"><a href="#三、Grafana-安装和配置" class="headerlink" title="三、Grafana 安装和配置"></a>三、Grafana 安装和配置</h2><p>1、启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d --name=grafana -p 3000:3000 grafana/grafana</span><br></pre></td></tr></table></figure>
+
+<p>2、登录</p>
+<p>访问 <code>http://localhost:3000/login</code> ，初始账号/密码为：<code>admin/admin</code> </p>
+<p>3、配置数据源</p>
+<ul>
+<li>点击左侧齿轮<code>Configuration</code>中<code>Add Data Source</code>，会看到如下界面：</li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20200924110615218.png" alt="image-20200924110615218" style="zoom: 25%;">
+
+<ul>
+<li>这里我们选择Prometheus 当做数据源，这里我们就配置一下Prometheus 的访问地址，点击 <code>Save &amp; Test</code></li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20200924110807215.png" alt="image-20200924110807215" style="zoom:25%;">
+
+<p>4、创建监控 Dashboard</p>
+<ul>
+<li>点击导航栏上的 <code>+</code> 按钮，并点击Dashboard，将会看到类似如下的界面</li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20200924110949259.png" alt="image-20200924110949259" style="zoom:25%;">
+
+<ul>
+<li>点击<code>+ Add new panel</code></li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20200924111151204.png" alt="image-20200924111151204" style="zoom:25%;">
+
+<h2 id="四、自定义监控指标"><a href="#四、自定义监控指标" class="headerlink" title="四、自定义监控指标"></a>四、自定义监控指标</h2><p>1、创建 Prometheus 监控管理类<code>PrometheusCustomMonitor</code></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.Counter;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.DistributionSummary;</span><br><span class="line"><span class="keyword">import</span> io.micrometer.core.instrument.MeterRegistry;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.annotation.PostConstruct;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PrometheusCustomMonitor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Counter requestErrorCount;</span><br><span class="line">    <span class="keyword">private</span> Counter orderCount;</span><br><span class="line">    <span class="keyword">private</span> DistributionSummary amountSum;</span><br><span class="line">    <span class="keyword">private</span> AtomicInteger failCaseNum;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MeterRegistry registry;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PrometheusCustomMonitor</span><span class="params">(MeterRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.registry = registry;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        requestErrorCount = registry.counter(<span class="string">"requests_error_total"</span>, <span class="string">"status"</span>, <span class="string">"error"</span>);</span><br><span class="line">        orderCount = registry.counter(<span class="string">"order_request_count"</span>, <span class="string">"order"</span>, <span class="string">"test-svc"</span>);</span><br><span class="line">        amountSum = registry.summary(<span class="string">"order_amount_sum"</span>, <span class="string">"orderAmount"</span>, <span class="string">"test-svc"</span>);</span><br><span class="line">        failCaseNum = registry.gauge(<span class="string">"fail_case_num"</span>, <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Counter <span class="title">getRequestErrorCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> requestErrorCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Counter <span class="title">getOrderCount</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> orderCount;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DistributionSummary <span class="title">getAmountSum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> amountSum;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AtomicInteger <span class="title">getFailCaseNum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> failCaseNum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>2、新增<code>/order</code>接口</p>
@@ -362,14 +389,16 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 9090:9090 -v $(<span class="built_in">pwd</span>)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus --config.file=/etc/prometheus/prometheus.yml</span><br></pre></td></tr></table></figure>
 
 <p>选择对应指标后可以看到数据变化</p>
+<p>6、使用 Grafana 展示</p>
+<p>在 Dashboard 界面选择对应的监控指标即可</p>
 <hr>
 <p>参考资料：</p>
 <p><a href="https://prometheus.io/docs/concepts/metric_types/" target="_blank" rel="noopener">Metric types | Prometheus</a></p>
 <p><a href="https://blog.csdn.net/typa01_kk/article/details/76696618" target="_blank" rel="noopener">IntelliJ IDEA创建第一个Spring Boot项目_Study Notes-CSDN博客</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1508319" target="_blank" rel="noopener">Spring Boot 使用 Micrometer 集成 Prometheus 监控 Java 应用性能 【springboot 2.0】</a></p>
 <p><a href="https://micrometer.io/docs/concepts" target="_blank" rel="noopener">Micrometer Application Monitoring【官方文档】</a></p>
-<p><a href="https://blog.kubernauts.io/https-blog-kubernauts-io-monitoring-java-spring-boot-applications-with-prometheus-part-1-c0512f2acd7b" target="_blank" rel="noopener">Monitoring Java Spring Boot applications with Prometheus: Part 1 | by Arush Salil | Kubernauts</a></p>
-<p>【放弃这个教程？】client 不支持 springboot 2.x，最高支持 1.5</p>
+<p><a href="https://juejin.im/post/6844904052417904653" target="_blank" rel="noopener">Spring Boot 微服务应用集成Prometheus + Grafana 实现监控告警 ★</a></p>
+<p><a href="https://blog.kubernauts.io/https-blog-kubernauts-io-monitoring-java-spring-boot-applications-with-prometheus-part-1-c0512f2acd7b" target="_blank" rel="noopener">Monitoring Java Spring Boot applications with Prometheus: Part 1 | by Arush Salil | Kubernauts 【放弃这个教程？】client java 不支持 springboot 2.x，最高支持 1.5</a></p>
 
       </div>
       
@@ -381,10 +410,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-09-23T20:54:02+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-09-24T11:13:02+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年9月23日</p>
+    <p>更新于 2020年9月24日</p>
   </a>
 </div>
 
@@ -529,7 +558,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、添加依赖"><span class="toc-text">一、添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、Prometheus-安装与配置"><span class="toc-text">二、Prometheus 安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、自定义监控指标"><span class="toc-text">三、自定义监控指标</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、添加依赖"><span class="toc-text">一、添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、Prometheus-安装与配置"><span class="toc-text">二、Prometheus 安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Grafana-安装和配置"><span class="toc-text">三、Grafana 安装和配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、自定义监控指标"><span class="toc-text">四、自定义监控指标</span></a></li></ol>
     </div>
   </section>
 
@@ -754,7 +783,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hexo/" style="font-size: 24px; color: #555">Hexo</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 17.33px; color: #828282">vim, 教程</a> <a href="/tags/教程/" style="font-size: 20.67px; color: #6c6c6c">教程</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 24px; color: #555">Hexo</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 20.67px; color: #6c6c6c">教程</a>
     </div>
   </section>
 
