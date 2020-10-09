@@ -117,7 +117,7 @@ cd /hadoop-$version-src
 
 # 开始编译
 echo -e "\n\ncompile hadoop $version..."
-mvn package -Pdist,native -DskipTests -Dtar
+mvn clean package -Pdist,native -DskipTests -Dtar
 
 # 输出结果
 if [[ $? -eq 0]]; then
@@ -195,13 +195,53 @@ $ sudo docker run -v $(pwd)/hadoop-$VERSION-src:/hadoop-$VERSION-src --privilege
 使用该参数，container内的root拥有真正的root权限。
 否则，container内的root只是外部的一个普通用户权限。
 
+
+
+- 总结
+
+```bash
+# pull docker image
+docker pull shuofxz/hadoop-compiler:1.0
+
+# === HADOOP ===
+# hadoop download link
+# new version
+https://hadoop.apache.org/releases.html
+# old version
+https://archive.apache.org/dist/hadoop/common/
+
+# compile command (about 15 minutes to complete)
+mvn package -Pdist,native -DskipTests -Dtar
+
+# compile with script file
+$ export VERSION=2.7.3
+$ sudo docker run -v $(pwd)/hadoop-$VERSION-src:/hadoop-$VERSION-src --privileged=true shuofxz/hadoop-compiler:1.0 /root/hadoop-compile.sh $VERSION
+
+
+# === HIVE ===
+# hive download link
+# select corresponding branch src file to download
+https://github.com/apache/hive
+
+# compile command (about 10 minutes to complete)
+mvn clean package -Pdist -DskipTests
+
+# compile with script file
+$ export VERSION=2.3.0
+$ sudo docker run -v $(pwd)/hive-rel-release-$VERSION:/hive-rel-release-$VERSION --privileged=true shuofxz/hadoop-compiler:1.0 /root/hive-compile.sh $VERSION
+```
+
+
+
+
+
 hadoop-2.7.0-src.tar.gz  release-2.3.0.tar.gz
 
 
 
 ---
 
-已包括各种库的 image，可以直接编译 hadoop
+已包括各种库的 image，可以直接编译 hadoop（不好用）
 
 GitHub - kiwenlau/compile-hadoop: Compile Hadoop in Docker container
 https://github.com/kiwenlau/compile-hadoop
