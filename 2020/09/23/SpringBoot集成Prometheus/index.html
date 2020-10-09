@@ -325,7 +325,7 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server.port=8088</span><br><span class="line">spring.application.name=springboot2-prometheus</span><br><span class="line">management.endpoints.web.exposure.include=*</span><br><span class="line">management.metrics.tags.application=$&#123;spring.application.name&#125;</span><br></pre></td></tr></table></figure>
 
-<p>可以直接运行程序，访问<code>http://localhost:8080/actuator/prometheus</code>可以看到下面的内容：</p>
+<p>可以直接运行程序，访问<code>http://localhost:8088/actuator/prometheus</code>可以看到下面的内容：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># HELP jvm_buffer_total_capacity_bytes An estimate of the total capacity of the buffers in this pool</span><br><span class="line"># TYPE jvm_buffer_total_capacity_bytes gauge</span><br><span class="line">jvm_buffer_total_capacity_bytes&#123;id=&quot;direct&quot;,&#125; 90112.0</span><br><span class="line">jvm_buffer_total_capacity_bytes&#123;id=&quot;mapped&quot;,&#125; 0.0</span><br><span class="line"># HELP tomcat_sessions_expired_sessions_total  </span><br><span class="line"># TYPE tomcat_sessions_expired_sessions_total counter</span><br><span class="line">tomcat_sessions_expired_sessions_total 0.0</span><br><span class="line"># HELP jvm_classes_unloaded_classes_total The total number of classes unloaded since the Java virtual machine has started execution</span><br><span class="line"># TYPE jvm_classes_unloaded_classes_total counter</span><br><span class="line">jvm_classes_unloaded_classes_total 1.0</span><br><span class="line"># HELP jvm_buffer_count_buffers An estimate of the number of buffers in the pool</span><br><span class="line"># TYPE jvm_buffer_count_buffers gauge</span><br><span class="line">jvm_buffer_count_buffers&#123;id=&quot;direct&quot;,&#125; 11.0</span><br><span class="line">jvm_buffer_count_buffers&#123;id=&quot;mapped&quot;,&#125; 0.0</span><br><span class="line"># HELP system_cpu_usage The &quot;recent cpu usage&quot; for the whole system</span><br><span class="line"># TYPE system_cpu_usage gauge</span><br><span class="line">system_cpu_usage 0.0939447637893599</span><br><span class="line"># HELP jvm_gc_max_data_size_bytes Max size of old generation memory pool</span><br><span class="line"># TYPE jvm_gc_max_data_size_bytes gauge</span><br><span class="line">jvm_gc_max_data_size_bytes 2.841116672E9</span><br><span class="line"></span><br><span class="line"># 此处省略超多字...</span><br></pre></td></tr></table></figure>
 
 <h2 id="二、Prometheus-安装与配置"><a href="#二、Prometheus-安装与配置" class="headerlink" title="二、Prometheus 安装与配置"></a>二、Prometheus 安装与配置</h2><p>使用 docker 运行 Prometheus（仅初始测试）</p>
@@ -399,6 +399,7 @@
 <p><a href="https://micrometer.io/docs/concepts" target="_blank" rel="noopener">Micrometer Application Monitoring【官方文档】</a></p>
 <p><a href="https://juejin.im/post/6844904052417904653" target="_blank" rel="noopener">Spring Boot 微服务应用集成Prometheus + Grafana 实现监控告警 ★</a></p>
 <p><a href="https://blog.kubernauts.io/https-blog-kubernauts-io-monitoring-java-spring-boot-applications-with-prometheus-part-1-c0512f2acd7b" target="_blank" rel="noopener">Monitoring Java Spring Boot applications with Prometheus: Part 1 | by Arush Salil | Kubernauts 【放弃这个教程？】client java 不支持 springboot 2.x，最高支持 1.5</a></p>
+<p><a href="https://segmentfault.com/a/1190000015309478" target="_blank" rel="noopener">Spring Boot 参考指南（端点）_风继续吹 - SegmentFault 思否</a></p>
 
       </div>
       
@@ -410,10 +411,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-09-24T11:13:02+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-09-25T20:14:05+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年9月24日</p>
+    <p>更新于 2020年9月25日</p>
   </a>
 </div>
 
@@ -482,6 +483,25 @@
       
       
           <div class="prev-next">
+              
+                  <section class="prev">
+                      <span class="art-item-left">
+                          <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                          <h4>
+                              <a href="/2020/10/09/将console输出到文件/" rel="prev" title="将console输出到文件">
+                                
+                                    将console输出到文件
+                                
+                              </a>
+                          </h4>
+                          
+                              
+                              <h6 class="tags">
+                                  <a class="tag" href="/tags/教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 教程</a>
+                              </h6>
+                          
+                      </span>
+                  </section>
               
               
                   <section class="next">
@@ -729,7 +749,7 @@
         
           <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(3)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(12)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(13)</div></a></li>
         
       </ul>
     </div>
@@ -783,7 +803,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 24px; color: #555">Hexo</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 20.67px; color: #6c6c6c">教程</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 24px; color: #555">Hexo</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a>
     </div>
   </section>
 

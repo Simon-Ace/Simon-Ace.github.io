@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>Tag: Linux, 压缩 | Rookie的博客</title>
+  <title>Rookie的博客</title>
   
   
 
@@ -43,71 +43,7 @@
 <body>
   
   
-  <div class="cover-wrapper">
-    <cover class='cover  half'>
-      
-        
-  <h1 class='title'>Rookie的博客</h1>
-
-
-  <div class="m_search">
-    <form name="searchform" class="form u-search-form">
-      <input type="text" class="input u-search-input" placeholder="" />
-      <i class="icon fas fa-search fa-fw"></i>
-    </form>
-  </div>
-
-<div class='menu navgation'>
-  <ul class='h-list'>
-    
-      
-        <li>
-          <a class="nav home" href="/"
-            
-            
-            id="home">
-            <i class='fas fa-rss fa-fw'></i>&nbsp;博文
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/projects/"
-            
-            
-            id="projects">
-            <i class='fas fa-code-branch fa-fw'></i>&nbsp;项目
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/friends/"
-            
-              rel="nofollow"
-            
-            
-            id="friends">
-            <i class='fas fa-link fa-fw'></i>&nbsp;友链
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/about/"
-            
-              rel="nofollow"
-            
-            
-            id="about">
-            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
-          </a>
-        </li>
-      
-    
-  </ul>
-</div>
-
-      
-    </cover>
-    <header class="l_header pure">
+  <header class="l_header pure">
   <div id="loading-bar-wrapper">
     <div id="loading-bar" class="pure"></div>
   </div>
@@ -271,23 +207,13 @@
 	</aside>
 <script>setLoadingBarProgress(40);</script>
 
-  </div>
 
 
-  <div class="l_body">
+  <div class="l_body nocover">
     <div class='body-wrapper'>
-      
-<div class='l_main'>
+      <div class='l_main'>
   
-    
-      
   <section class="post-list">
-    
-      
-        
-          
-        
-      
     
     
       
@@ -304,8 +230,8 @@
       
         
   <h2 class="title">
-    <a href="/2020/09/01/Linux压缩命令/">
-      Linux压缩命令
+    <a href="/2019/10/14/配置多个git账号/">
+      一台电脑配置多个git账号
     </a>
   </h2>
 
@@ -335,7 +261,7 @@
             <div class="new-meta-item date">
   <a class='notlink'>
     <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2020-09-01</p>
+    <p>2019-10-14</p>
   </a>
 </div>
 
@@ -345,9 +271,9 @@
             
   
   <div class='new-meta-item category'>
-    <a href='/categories/技术/' rel="nofollow">
+    <a href='/categories/教程/' rel="nofollow">
       <i class="fas fa-folder-open" aria-hidden="true"></i>
-      <p>技术</p>
+      <p>教程</p>
     </a>
   </div>
 
@@ -369,10 +295,11 @@
 
   <section class="article typo">
     <div class="article-entry" itemprop="articleBody">
-      <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.15版本后 tar 自动识别压缩方式</span></span><br><span class="line">tar -xvf filename.tar.gz</span><br></pre></td></tr></table></figure>
+      <h2 id="1-清除git全局设置"><a href="#1-清除git全局设置" class="headerlink" title="1 清除git全局设置"></a>1 清除git全局设置</h2><p>如果配置第一个账号的时候使用<code>git config --global</code>设置过，就先要取消掉，否则两个账号肯定会冲突</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 取消global</span></span><br><span class="line">git config --global --unset user.name</span><br><span class="line">git config --global --unset user.email</span><br></pre></td></tr></table></figure>
       
         <div class="readmore">
-          <a href="/2020/09/01/Linux压缩命令/" class="flat-box">
+          <a href="/2019/10/14/配置多个git账号/" class="flat-box">
             <i class="fas fa-book-open fa-fw" aria-hidden="true"></i>
             阅读全文
           </a>
@@ -382,7 +309,7 @@
     
       <div class="full-width auto-padding tags">
         
-          <a href="/tags/Linux-压缩/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> Linux, 压缩</a>
+          <a href="/tags/git/" rel="nofollow"><i class="fas fa-tag fa-fw"></i> git</a>
         
       </div>
     
@@ -396,6 +323,24 @@
   </section>
   
     
+      <br>
+      <div class="prev-next">
+        <div class="prev-next">
+          
+            <a class="prev" rel="prev" href="/page/2/">
+              <section class="post prev" >
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页&nbsp;
+              </section>
+            </a>
+          
+          <p class="current">
+            3 / 3
+          </p>
+          
+        </div>
+      </div>
+
+    
     <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
     
     
@@ -403,8 +348,6 @@
   
 
 
-    
-  
 </div>
 <aside class='l_side'>
   
