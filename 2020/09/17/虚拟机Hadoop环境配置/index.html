@@ -357,6 +357,12 @@
 <p>安装<code>rsync</code>，<code>sudo yum install -y rsync</code></p>
 <p>改权限，<code>chmod +x xsync</code></p>
 <ul>
+<li>执行相同命令脚本</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">pcount=<span class="variable">$#</span></span><br><span class="line"><span class="keyword">if</span> ((pcount==0)); <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> no args;</span><br><span class="line"><span class="built_in">exit</span>;</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> hadoop102 hadoop103 hadoop104</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">"==== <span class="variable">$i</span> <span class="variable">$1</span> ===="</span></span><br><span class="line">        ssh <span class="variable">$i</span> <span class="string">"<span class="variable">$1</span>"</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<p>移动到<code>/bin</code>，改权限</p>
+<ul>
 <li>自动配置网络脚本</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">id=<span class="variable">$1</span></span><br><span class="line"><span class="comment"># sed -i "s/before replace/after replace/"</span></span><br><span class="line">sudo sed -i <span class="string">"s/192.168.87.101/192.168.87.<span class="variable">$id</span>/"</span> /etc/sysconfig/network-scripts/ifcfg-eth0</span><br><span class="line">sudo sed -i <span class="string">"s/hadoop101/hadoop<span class="variable">$id</span>/"</span> /etc/sysconfig/network</span><br><span class="line"></span><br><span class="line">file=/etc/udev/rules.d/70-persistent-net.rules</span><br><span class="line"></span><br><span class="line"><span class="comment"># count "SUBSYSTEM" word number</span></span><br><span class="line">nu=$(grep -c SUBSYSTEM <span class="variable">$file</span>)</span><br><span class="line"><span class="keyword">if</span>((<span class="variable">$nu</span> &gt; 1));</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">        <span class="comment"># delete 8th line</span></span><br><span class="line">        sed -i <span class="string">'8d'</span> <span class="variable">$file</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">sed -i <span class="string">'s/eth1/eth0/'</span> <span class="variable">$file</span></span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
@@ -372,7 +378,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ java -version</span><br><span class="line">$ hadoop version</span><br></pre></td></tr></table></figure>
 
 <p>5、使用 xsync 同步到多个机器上</p>
-<h2 id="三、运行配置"><a href="#三、运行配置" class="headerlink" title="三、运行配置"></a>三、运行配置</h2><p><a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html" target="_blank" rel="noopener">Apache Hadoop 3.2.1 – Hadoop: Setting up a Single Node Cluster.</a></p>
+<h2 id="三、Hadoop-配置"><a href="#三、Hadoop-配置" class="headerlink" title="三、Hadoop 配置"></a>三、Hadoop 配置</h2><p><a href="https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html" target="_blank" rel="noopener">Apache Hadoop 3.2.1 – Hadoop: Setting up a Single Node Cluster.</a></p>
 <ul>
 <li>安装插件</li>
 </ul>
@@ -595,8 +601,287 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ date -s <span class="string">"2017-9-11 11:11:11"</span></span><br></pre></td></tr></table></figure>
 
 <p>7）若主机时间不对</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ service ntpd stop</span><br><span class="line">$ ntpdate us.pool.ntp.org</span><br><span class="line">$ service ntpd start</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ service ntpd stop</span><br><span class="line">$ ntpdate us.pool.ntp.org</span><br><span class="line">$ service ntpd start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者直接</span></span><br><span class="line">$ sudo ntpdate -u pool.ntp.org</span><br></pre></td></tr></table></figure>
 
+<h2 id="四、Zookeeper-配置"><a href="#四、Zookeeper-配置" class="headerlink" title="四、Zookeeper 配置"></a>四、Zookeeper 配置</h2><h3 id="4-1-本地模式"><a href="#4-1-本地模式" class="headerlink" title="4.1 本地模式"></a>4.1 本地模式</h3><p><strong>1、安装前准备</strong></p>
+<ul>
+<li>安装Jdk</li>
+<li>拷贝Zookeeper安装包到Linux系统下</li>
+<li>解压到指定目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf zookeeper-3.4.10.tar.gz -C /opt/module/</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、配置修改</strong></p>
+<ul>
+<li>修改<code>conf/zoo_sample.cfg</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp zoo_sample.cfg zoo.cfg</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>修改 zoo.cfg 文件</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dataDir=/opt/module/zookeeper-3.4.10/zkData</span><br></pre></td></tr></table></figure>
+
+<p>并创建 zkData 文件夹</p>
+<p><strong>3、操作Zookeeper</strong></p>
+<ul>
+<li>启动Zookeeper</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkServer.sh start</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看进程是否启动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ jps</span><br><span class="line">4020 Jps</span><br><span class="line">4001 QuorumPeerMain</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看状态：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg</span><br><span class="line">Mode: standalone</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>停止Zookeeper</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkServer.sh stop</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-集群模式"><a href="#4-2-集群模式" class="headerlink" title="4.2 集群模式"></a>4.2 集群模式</h3><p><strong>1、配置</strong></p>
+<ul>
+<li>修改 zoo.cfg 文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">server.2=hadoop102:2888:3888</span><br><span class="line">server.3=hadoop103:2888:3888</span><br><span class="line">server.4=hadoop104:2888:3888</span><br><span class="line"># 2888 为集群间通信端口号</span><br><span class="line"># 3888 为选举端口号</span><br><span class="line"># server.2/3/4 为id，不相同即可</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建 <code>zkData/myid</code>，每个机器写不同的，要和前面的对应上</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ vim zkData/myid</span><br><span class="line"><span class="comment"># hadoop102</span></span><br><span class="line">2</span><br><span class="line"><span class="comment"># hadoop103</span></span><br><span class="line">3</span><br><span class="line"><span class="comment"># hadoop104</span></span><br><span class="line">4</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置 <code>bin/zkEnv.sh</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 替换前</span></span><br><span class="line">ZOO_LOG_DIR=<span class="string">"."</span></span><br><span class="line"><span class="comment"># 替换后</span></span><br><span class="line">ZOO_LOG_DIR=<span class="string">"/opt/module/zookeeper-3.4.10/logs"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 JAVA_HOME（远程启动的时候才是必要的，因为会丢失环境变量）</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/jdk1.8.0_144</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同步 xsync</li>
+</ul>
+<p><strong>2、启动</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每个机器都要单独启动</span></span><br><span class="line">./bin/zkServer.sh start</span><br></pre></td></tr></table></figure>
+
+<p>仅启动一台机器时：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ./zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg</span><br><span class="line">Error contacting service. It is probably not running.</span><br></pre></td></tr></table></figure>
+
+<p>启动两台机器（超过半数）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ./zkServer.sh status</span><br><span class="line">ZooKeeper JMX enabled by default</span><br><span class="line">Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg</span><br><span class="line">Mode: leader / follower</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-客户端操作"><a href="#4-3-客户端操作" class="headerlink" title="4.3 客户端操作"></a>4.3 客户端操作</h3><ul>
+<li>启动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkCli.sh</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>执行</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令基本语法</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>help</td>
+<td>显示所有操作命令</td>
+</tr>
+<tr>
+<td>ls path [watch]</td>
+<td>使用 ls 命令来查看当前znode中所包含的内容</td>
+</tr>
+<tr>
+<td>ls2 path [watch]</td>
+<td>查看当前节点数据并能看到更新次数等数据</td>
+</tr>
+<tr>
+<td>create</td>
+<td>普通创建<br>-s  含有序列<br>-e  临时（重启或者超时消失）</td>
+</tr>
+<tr>
+<td>get path [watch]</td>
+<td>获得节点的值</td>
+</tr>
+<tr>
+<td>set</td>
+<td>设置节点的具体值</td>
+</tr>
+<tr>
+<td>stat</td>
+<td>查看节点状态</td>
+</tr>
+<tr>
+<td>delete</td>
+<td>删除节点</td>
+</tr>
+<tr>
+<td>rmr</td>
+<td>递归删除节点</td>
+</tr>
+</tbody></table>
+<h2 id="五、Kakfa-配置"><a href="#五、Kakfa-配置" class="headerlink" title="五、Kakfa 配置"></a>五、Kakfa 配置</h2><h3 id="5-1-环境准备"><a href="#5-1-环境准备" class="headerlink" title="5.1 环境准备"></a>5.1 环境准备</h3><ul>
+<li>在 hadoop102 103 104 上均安装 Kafka</li>
+<li>jar 包下载 <a href="https://kafka.apache.org/downloads" target="_blank" rel="noopener">https://kafka.apache.org/downloads</a><ul>
+<li>命名中有两个版本号，第一个为 scala 版本，第二个是 kafka 版本</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-2-集群配置"><a href="#5-2-集群配置" class="headerlink" title="5.2 集群配置"></a>5.2 集群配置</h3><ul>
+<li>修改 <code>config/server.properties</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># broker的全局唯一编号，不能重复</span><br><span class="line">broker.id=0</span><br><span class="line"></span><br><span class="line"># 删除topic功能使能（kafka 2.x 版本 不需要配置）</span><br><span class="line">delete.topic.enable=true</span><br><span class="line"></span><br><span class="line"># kafka运行时数据存放的路径</span><br><span class="line">log.dirs=/opt/module/kafka_2.12-2.3.1/data</span><br><span class="line"></span><br><span class="line"># 配置连接Zookeeper集群地址</span><br><span class="line">zookeeper.connect=hadoop102:2181,hadoop103:2181,hadoop104:2181</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>分发安装包到所有物理机上 xsync</p>
+</li>
+<li><p>将 hadoop103 104 上<code>config/server.properties</code> 中的 <code>broker.id=x</code>进行修改</p>
+</li>
+</ul>
+<p><strong>单点启动 / 停止</strong> </p>
+<p>依次在 hadoop102、hadoop103、hadoop104 节点上启动/停止 kafka，执行下面的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line"><span class="comment"># 前台运行</span></span><br><span class="line">$ bin/kafka-server-start.sh config/server.properties</span><br><span class="line"><span class="comment"># 后台运行</span></span><br><span class="line">$ bin/kafka-server-start.sh -daemon config/server.properties</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止</span></span><br><span class="line">$ bin/kafka-server-stop.sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>群起 / 群停</strong></p>
+<p>由于 Kafka 中没有给集群启动停止的脚本，需要自己写<code>kk-all.sh</code></p>
+<p>需要注意：要先在 <code>~/.bashrc</code> 中配置 java 环境变量（xsync）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># JAVA_HOME</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/jdk1.8.0_144</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JAVA_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">"start"</span>)&#123;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> hadoop102 hadoop103 hadoop104</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"==== start <span class="variable">$i</span> kafka ===="</span></span><br><span class="line">                <span class="comment"># ssh $i "source /etc/profile"</span></span><br><span class="line">                ssh <span class="variable">$i</span> <span class="string">"/opt/module/kafka_2.12-2.3.1/bin/kafka-server-start.sh -daemon /opt/module/kafka_2.12-2.3.1/config/server.properties"</span></span><br><span class="line">        <span class="keyword">done</span></span><br><span class="line">&#125;;;</span><br><span class="line"></span><br><span class="line"><span class="string">"stop"</span>)&#123;</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> hadoop102 hadoop103 hadoop104</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"==== stop <span class="variable">$i</span> kafka ===="</span></span><br><span class="line">                <span class="comment"># ssh $i "source /etc/profile"</span></span><br><span class="line">                ssh <span class="variable">$i</span> <span class="string">"/opt/module/kafka_2.12-2.3.1/bin/kafka-server-stop.sh"</span></span><br><span class="line">        <span class="keyword">done</span></span><br><span class="line">&#125;;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>启动/停止 Kafka：（记得先启动 Zookeeper）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ ./kk-all.sh start</span><br><span class="line">$ jps</span><br><span class="line">1637 QuorumPeerMain</span><br><span class="line">6071 Kafka</span><br><span class="line">6538 Jps</span><br><span class="line"></span><br><span class="line">$ ./kk-all.sh stop</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-命令行操作"><a href="#5-3-命令行操作" class="headerlink" title="5.3 命令行操作"></a>5.3 命令行操作</h3><ul>
+<li>查看当前服务器中的所有 topic</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --list</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建 topic</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --create --replication-factor 3 --partitions 1 --topic first</span><br></pre></td></tr></table></figure>
+
+<p><code>--replication-factor</code> 定义副本数；<code>--partitions</code> 定义分区数</p>
+<ul>
+<li>删除 topic</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --delete --topic first</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看某个 Topic 的详情</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --describe --topic first</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>发送消息</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-console-producer.sh --broker-list hadoop102:9092 --topic first</span><br><span class="line">&gt;hello world</span><br><span class="line">&gt;atguigu atguigu</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>消费消息</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first</span><br></pre></td></tr></table></figure>
+
+<p><code>--from-beginning</code> 会把 first 主题中以往所有的数据都读取出来</p>
+<h2 id="六、Spark-配置"><a href="#六、Spark-配置" class="headerlink" title="六、Spark 配置"></a>六、Spark 配置</h2><h3 id="6-1-环境准备"><a href="#6-1-环境准备" class="headerlink" title="6.1 环境准备"></a>6.1 环境准备</h3><p>下载地址：<a href="https://archive.apache.org/dist/spark/" target="_blank" rel="noopener">https://archive.apache.org/dist/spark/</a></p>
+<p>有两种版本，hadoop 版下载就能用，不依赖其他组价；without-hadoop 需要依赖已有的 hadoop 组件</p>
+<blockquote>
+<p>spark-2.3.2-bin-hadoop2.7.tgz<br>spark-2.3.2-bin-without-hadoop.tgz </p>
+</blockquote>
+<h3 id="6-2-本地模式-Local"><a href="#6-2-本地模式-Local" class="headerlink" title="6.2 本地模式 Local"></a>6.2 本地模式 Local</h3><p>解压后进入 Spark 根目录执行（一个算 PI 的程序）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-submit \</span><br><span class="line">--class org.apache.spark.examples.SparkPi \</span><br><span class="line">--master <span class="built_in">local</span>[2] \</span><br><span class="line">./examples/jars/spark-examples_2.11-2.3.2.jar 100</span><br><span class="line"></span><br><span class="line">bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.11-2.3.2.jar 100</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 一大堆迭代过程 </span></span><br><span class="line">Pi is roughly 3.1424043142404314</span><br></pre></td></tr></table></figure>
+
+<p>可以通过访问 <a href="http://hadoop102:4040" target="_blank" rel="noopener">http://hadoop102:4040</a> 查看任务运行情况</p>
+<p><strong>「问题」</strong>：运行结束这个页面就关闭了，不能查历史任务执行情况</p>
+<p><strong>「解决」</strong>：添加 Spark History Server</p>
+<h3 id="6-3-Standalone-模式"><a href="#6-3-Standalone-模式" class="headerlink" title="6.3 Standalone 模式"></a>6.3 Standalone 模式</h3><p>构建一个由 Master + Slave 构成的 Spark 集群，Spark 运行在集群中。</p>
+<p>这个要和 Hadoop 中的 Standalone 区别开来.这里的 Standalone 是指只用 Spark 来搭建一个集群, 不需要借助其他的框架.是相对于 Yarn 和 Mesos 来说的.</p>
+<h4 id="6-3-1-Spark-server配置"><a href="#6-3-1-Spark-server配置" class="headerlink" title="6.3.1 Spark server配置"></a>6.3.1 Spark server配置</h4><p>1、进入配置文件目录conf，配置spark-evn.sh</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> conf/</span><br><span class="line">cp spark-env.sh.template spark-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>spark-env.sh</code> 文件中配置如下内容:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SPARK_MASTER_HOST=hadoop102</span><br><span class="line">SPARK_MASTER_PORT=7077 <span class="comment"># 默认端口就是7077, 可以省略不配</span></span><br></pre></td></tr></table></figure>
+
+<p>2、修改 slaves 文件，添加 worker 节点</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cp slaves.template slaves</span><br><span class="line"><span class="comment"># 在slaves文件中配置如下内容:</span></span><br><span class="line">hadoop201</span><br><span class="line">hadoop202</span><br><span class="line">hadoop203</span><br></pre></td></tr></table></figure>
+
+<p>3、修改 sbin/spark-config.sh，添加 JAVA_HOME （防止 JAVA_HOME is not set 报错）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> JAVA_HOME=/opt/module/jdk1.8.0_144</span><br></pre></td></tr></table></figure>
+
+<p>4、分发spark-standalone</p>
+<p>5、启动 Spark 集群</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/start-all.sh</span><br></pre></td></tr></table></figure>
+
+<p>6、网页查看信息：<a href="http://hadoop102:8080/" target="_blank" rel="noopener">http://hadoop102:8080/</a></p>
+<p>7、测试</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-submit \</span><br><span class="line">--class org.apache.spark.examples.SparkPi \</span><br><span class="line">--master spark://hadoop102:7077 \</span><br><span class="line">--executor-memory 1G \</span><br><span class="line">--total-executor-cores 6 \</span><br><span class="line">--executor-cores 2 \</span><br><span class="line">./examples/jars/spark-examples_2.11-2.3.2.jar 100</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-3-2-spark-history-server"><a href="#6-3-2-spark-history-server" class="headerlink" title="6.3.2 spark-history-server"></a>6.3.2 spark-history-server</h4><p>在 Spark-shell 没有退出之前，看到正在执行的任务的日志情况:<a href="http://hadoop102:4040" target="_blank" rel="noopener">http://hadoop102:4040</a>. 但是退出之后，执行的所有任务记录全部丢失</p>
+<p>所以需要配置任务的历史服务器, 方便在任何需要的时候去查看日志。</p>
+<ul>
+<li>配置spark-default.conf文件，开启 Log</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp spark-defaults.conf.template spark-defaults.conf</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>spark-defaults.conf</code> 文件中, 添加如下内容:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark.eventLog.enabled           <span class="literal">true</span></span><br><span class="line">spark.eventLog.dir               hdfs://hadoop102:9000/spark-job-log</span><br></pre></td></tr></table></figure>
+
+<p>注意:</p>
+<p><code>hdfs://hadoop201:9000/spark-job-log</code> 目录必须提前存在, 名字随意</p>
+<ul>
+<li>修改spark-env.sh文件，添加如下配置</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> SPARK_HISTORY_OPTS=<span class="string">"-Dspark.history.ui.port=18080 -Dspark.history.retainedApplications=30 -Dspark.history.fs.logDirectory=hdfs://hadoop102:9000/spark-job-log"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分发配置文件</li>
+<li>启动历史服务<ul>
+<li>需要先启动 HDFS <code>$HADOOP_HOME/sbin/start-dfs.sh</code></li>
+<li>然后再启动: <code>sbin/start-history-server.sh</code></li>
+</ul>
+</li>
+</ul>
+<p>ui 地址: <a href="http://hadoop102:18080" target="_blank" rel="noopener">http://hadoop102:18080</a></p>
+<h3 id="6-4-Yarn-模式"><a href="#6-4-Yarn-模式" class="headerlink" title="6.4 Yarn 模式"></a>6.4 Yarn 模式</h3><h4 id="6-4-1-spark-server-配置"><a href="#6-4-1-spark-server-配置" class="headerlink" title="6.4.1 spark server 配置"></a>6.4.1 spark server 配置</h4><ul>
+<li>修改 <code>conf/spark-env.sh</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YARN_CONF_DIR=/opt/module/hadoop-2.7.2/etc/hadoop</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-submit \</span><br><span class="line">--class org.apache.spark.examples.SparkPi \</span><br><span class="line">--master yarn \</span><br><span class="line">--deploy-mode client \</span><br><span class="line">./examples/jars/spark-examples_2.11-2.3.2.jar 100</span><br></pre></td></tr></table></figure>
+
+<p>Yarn：<a href="http://hadoop103:8088" target="_blank" rel="noopener">http://hadoop103:8088</a></p>
+<h4 id="6-4-2-spark-history-server"><a href="#6-4-2-spark-history-server" class="headerlink" title="6.4.2 spark-history-server"></a>6.4.2 spark-history-server</h4><p><code>$HADOOP_HOME/etc/hadoop/yarn-site.xml</code> 中添加</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.log.server.url<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>http://hadoop104:19888/jobhistory/logs<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 填 yarn historyserver 的物理机  --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>$SPARK_HOME/conf/spark-defaults.conf</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spark.yarn.historyServer.address	hadoop102:18080    # spark history Server 物理机</span><br><span class="line">spark.history.ui.port 						18080</span><br><span class="line">spark.eventLog.enabled 						true</span><br><span class="line">spark.eventLog.dir               	hdfs://hadoop102:9000/spark-job-log</span><br><span class="line">spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log</span><br></pre></td></tr></table></figure>
+
+<p>【可以正常展示了】</p>
+<p>相关文档解释：<a href="https://www.cnblogs.com/sorco/p/7070922.html" target="_blank" rel="noopener">spark深入：配置文件与日志 - Super_Orco - 博客园</a></p>
+<ul>
+<li>查看方式<ul>
+<li>通过 YARN 查询<ul>
+<li><a href="http://hadoop103:8088/" target="_blank" rel="noopener">http://hadoop103:8088/</a></li>
+</ul>
+</li>
+<li>直接在 spark history server 中查询<ul>
+<li><a href="http://hadoop102:18080/" target="_blank" rel="noopener">http://hadoop102:18080/</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
       </div>
       
@@ -608,10 +893,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-10-08T18:14:34+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-10-13T18:23:57+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年10月8日</p>
+    <p>更新于 2020年10月13日</p>
   </a>
 </div>
 
@@ -775,7 +1060,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、运行配置"><span class="toc-text">三、运行配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Hadoop-配置"><span class="toc-text">三、Hadoop 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Zookeeper-配置"><span class="toc-text">四、Zookeeper 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-本地模式"><span class="toc-text">4.1 本地模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-集群模式"><span class="toc-text">4.2 集群模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-客户端操作"><span class="toc-text">4.3 客户端操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、Kakfa-配置"><span class="toc-text">五、Kakfa 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-环境准备"><span class="toc-text">5.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-集群配置"><span class="toc-text">5.2 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-命令行操作"><span class="toc-text">5.3 命令行操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Spark-配置"><span class="toc-text">六、Spark 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-环境准备"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-本地模式-Local"><span class="toc-text">6.2 本地模式 Local</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Standalone-模式"><span class="toc-text">6.3 Standalone 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-Spark-server配置"><span class="toc-text">6.3.1 Spark server配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-spark-history-server"><span class="toc-text">6.3.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Yarn-模式"><span class="toc-text">6.4 Yarn 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-1-spark-server-配置"><span class="toc-text">6.4.1 spark server 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-2-spark-history-server"><span class="toc-text">6.4.2 spark-history-server</span></a></li></ol></li></ol></li></ol>
     </div>
   </section>
 
