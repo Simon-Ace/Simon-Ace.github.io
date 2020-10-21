@@ -603,6 +603,63 @@
 <p>7）若主机时间不对</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ service ntpd stop</span><br><span class="line">$ ntpdate us.pool.ntp.org</span><br><span class="line">$ service ntpd start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者直接</span></span><br><span class="line">$ sudo ntpdate -u pool.ntp.org</span><br></pre></td></tr></table></figure>
 
+<h3 id="3-4-常用端口记录"><a href="#3-4-常用端口记录" class="headerlink" title="3.4 常用端口记录"></a>3.4 常用端口记录</h3><blockquote>
+<p><a href="https://blog.csdn.net/yeruby/article/details/49406073" target="_blank" rel="noopener">Hadoop默认端口应用一览_在路上的学习者-CSDN博客</a></p>
+<p><a href="https://blog.csdn.net/baiBenny/article/details/53887328" target="_blank" rel="noopener">Hadoop常用端口号_baiBenny的博客-CSDN博客</a></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>节点</th>
+<th>默认端口</th>
+<th>配置</th>
+<th>用途说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HDFS</td>
+<td>NameNode</td>
+<td>50070</td>
+<td>dfs.namenode.http-address</td>
+<td>http服务的端口，可查看 HDFS 存储内容</td>
+</tr>
+<tr>
+<td>HBase</td>
+<td>Master</td>
+<td>16000</td>
+<td></td>
+<td>Master RPC Port（远程通信调用）</td>
+</tr>
+<tr>
+<td></td>
+<td>Master</td>
+<td>16010</td>
+<td></td>
+<td>Master Web Port</td>
+</tr>
+<tr>
+<td></td>
+<td>Regionserver</td>
+<td>16020</td>
+<td></td>
+<td>Regionserver RPC Port</td>
+</tr>
+<tr>
+<td></td>
+<td>Regionserver</td>
+<td>16030</td>
+<td></td>
+<td>Regionserver Web Port</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 <h2 id="四、Zookeeper-配置"><a href="#四、Zookeeper-配置" class="headerlink" title="四、Zookeeper 配置"></a>四、Zookeeper 配置</h2><h3 id="4-1-本地模式"><a href="#4-1-本地模式" class="headerlink" title="4.1 本地模式"></a>4.1 本地模式</h3><p><strong>1、安装前准备</strong></p>
 <ul>
 <li>安装Jdk</li>
@@ -882,6 +939,85 @@
 </ul>
 </li>
 </ul>
+<h2 id="七、Hive-配置"><a href="#七、Hive-配置" class="headerlink" title="七、Hive 配置"></a>七、Hive 配置</h2><h3 id="7-1-单机默认配置"><a href="#7-1-单机默认配置" class="headerlink" title="7.1 单机默认配置"></a>7.1 单机默认配置</h3><p>下载地址：<a href="http://archive.apache.org/dist/hive/" target="_blank" rel="noopener">http://archive.apache.org/dist/hive/</a></p>
+<p><strong>安装部署：</strong></p>
+<ul>
+<li>修改 <code>conf/hive-env.sh.template</code> </li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ mv hive-env.sh.template hive-env.sh</span><br><span class="line">$ vim hive-env.sh</span><br><span class="line">~</span><br><span class="line">~</span><br><span class="line"><span class="built_in">export</span> HADOOP_HOME=/opt/module/hadoop-2.7.2</span><br><span class="line"><span class="built_in">export</span> HIVE_CONF_DIR=/opt/module/hive-2.3.0-bin/conf</span><br><span class="line">~</span><br><span class="line">~</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>hadoop 相关配置</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 hdfs yarn</span></span><br><span class="line">$ start-dfs.sh</span><br><span class="line">$ start-yarn.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 hive warehouse（存数据的地方）</span></span><br><span class="line">$ hadoop fs -mkdir /tmp</span><br><span class="line">$ hadoop fs -mkdir -p /user/hive/warehouse</span><br><span class="line">$ hadoop fs -chmod g+w /tmp</span><br><span class="line">$ hadoop fs -chmod g+w /user/hive/warehouse</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Hive 基本操作 </li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hive</span><br><span class="line"><span class="comment"># 查看数据库</span></span><br><span class="line">hive&gt; show databases;</span><br><span class="line"><span class="comment"># 打开默认数据库 </span></span><br><span class="line">hive&gt; use default;</span><br><span class="line"><span class="comment"># 显示 default 数据库中的表 </span></span><br><span class="line">hive&gt; show tables;</span><br><span class="line"><span class="comment"># 创建一张表</span></span><br><span class="line">hive&gt; create table student(id int, name string);</span><br><span class="line"><span class="comment"># 查看表的结构 </span></span><br><span class="line">hive&gt; desc student;</span><br><span class="line"><span class="comment"># 向表中插入数据</span></span><br><span class="line">hive&gt; insert into student values(1000,<span class="string">"ss"</span>);</span><br><span class="line"><span class="comment"># 查询表中数据</span></span><br><span class="line">hive&gt; select * from student;</span><br><span class="line"><span class="comment"># 退出 </span></span><br><span class="line">hive hive&gt; quit;</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-2-修改默认数据库（derby-gt-MySQL）"><a href="#7-2-修改默认数据库（derby-gt-MySQL）" class="headerlink" title="7.2 修改默认数据库（derby -&gt; MySQL）"></a>7.2 修改默认数据库（derby -&gt; MySQL）</h3><p>derby 只支持单个客户端连接，仅适用于简单测试。更换成关系型数据库（如MySQL），可支持多客户端连接。</p>
+<h4 id="7-2-1-安装-MySQL"><a href="#7-2-1-安装-MySQL" class="headerlink" title="7.2.1 安装 MySQL"></a>7.2.1 安装 MySQL</h4><ul>
+<li>卸载原有的，安装新的 MySQL </li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载原有的</span></span><br><span class="line">$ su -  <span class="comment"># 切换到 root 用户</span></span><br><span class="line">$ rpm -qa | grep mysql </span><br><span class="line">mysql-libs-5.1.73-7.el6.x86_64</span><br><span class="line">$ rpm -e --nodeps mysql-libs-5.1.73-7.el6.x86_64</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装新的 MySQL-server</span></span><br><span class="line">$ rpm -ivh MySQL-server-5.6.24-1.el6.x86_64.rpm</span><br><span class="line">cat /root/.mysql_secret <span class="comment"># 记住默认的root登录密码</span></span><br><span class="line">OEXaQuS8IWkG19Xs</span><br><span class="line">$ service mysql status</span><br><span class="line">$ service mysql start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装 MySQL-client</span></span><br><span class="line">$ rpm -ivh MySQL-client-5.6.24-1.el6.x86_64.rpm</span><br><span class="line"><span class="comment"># 修改 root 密码</span></span><br><span class="line">$ mysql -uroot -pOEXaQuS8IWkG19Xs</span><br><span class="line">mysql&gt;SET PASSWORD=PASSWORD(<span class="string">'123456'</span>);</span><br><span class="line">mysql&gt;<span class="built_in">exit</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置 MySQL 远程登录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ mysql -uroot -p123456</span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line">mysql&gt; show tables;</span><br><span class="line">mysql&gt; select User, Host, Password from user;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改 user 表，把 Host 表内容修改为%</span></span><br><span class="line">mysql&gt; update user <span class="built_in">set</span> host=<span class="string">'%'</span> <span class="built_in">where</span> host=<span class="string">'localhost'</span>;</span><br><span class="line"><span class="comment"># 其他的都删掉</span></span><br><span class="line">mysql&gt; delete from user <span class="built_in">where</span> host=<span class="string">'hadoop102'</span>;</span><br><span class="line">mysql&gt; delete from user <span class="built_in">where</span> host=<span class="string">'127.0.0.1'</span>;</span><br><span class="line">mysql&gt; delete from user <span class="built_in">where</span> host=<span class="string">'::1'</span>;</span><br><span class="line"></span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">mysql&gt; quit;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 都做完切换回原来的用户</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="7-2-2-修改-hive-元数据库"><a href="#7-2-2-修改-hive-元数据库" class="headerlink" title="7.2.2 修改 hive 元数据库"></a>7.2.2 修改 hive 元数据库</h4><ul>
+<li>拷贝驱动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp mysql-connector-java-5.1.27-bin.jar /opt/module/hive-2.3.0-bin/lib/</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置 Metastore 到 MySQL</li>
+</ul>
+<p>创建 <code>conf/hive-site.xml</code> </p>
+<blockquote>
+<p>官方配置文档<br><a href="https://cwiki.apache.org/confluence/display/Hive/AdminManual+Metastore+Administration" target="_blank" rel="noopener">AdminManual Metastore Administration - Apache Hive - Apache Software Foundation</a></p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0"?&gt;</span></span><br><span class="line"><span class="meta">&lt;?xml-stylesheet type="text/xsl" href="configuration.xsl"?&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://hadoop102:3306/metastore?createDatabaseIfNotExist=true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>JDBC connect string for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionDriverName<span class="tag">&lt;/<span class="name">name</span>&gt;</span> 	</span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>Driver class name for a JDBC metastore<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionUserName<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>root<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>username to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionPassword<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">description</span>&gt;</span>password to use against metastore database<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 初试化hive库</span></span><br><span class="line">$ bin/schematool -initSchema -dbType mysql</span><br><span class="line"><span class="comment"># 启动metastore节点</span></span><br><span class="line">$ nohup bin/hive --service metastore &amp;</span><br><span class="line"><span class="comment"># 启动hiveserver2（可选？） </span></span><br><span class="line">$ nohup bin/hive --service hiveserver2 &amp;</span><br><span class="line"><span class="comment"># 命令行启动</span></span><br><span class="line">$ bin/hive</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-3-Beeline-连接"><a href="#7-3-Beeline-连接" class="headerlink" title="7.3 Beeline 连接"></a>7.3 Beeline 连接</h3><blockquote>
+<p>Hive学习之路 （四）Hive的连接3种连接方式 - 扎心了，老铁 - 博客园<br><a href="https://www.cnblogs.com/qingyunzong/p/8715925.html" target="_blank" rel="noopener">https://www.cnblogs.com/qingyunzong/p/8715925.html</a></p>
+</blockquote>
+<h3 id="7-4-常用交互命令"><a href="#7-4-常用交互命令" class="headerlink" title="7.4 常用交互命令"></a>7.4 常用交互命令</h3><p>1、<code>-e</code>不进入 hive 的交互窗口执行 sql 语句 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/hive -e <span class="string">"select id from student;"</span></span><br></pre></td></tr></table></figure>
+
+<p>2、<code>-f</code>执行脚本中 sql 语句 </p>
+<ul>
+<li>创建 hivef.sql 文件</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ touch hivef.sql</span><br><span class="line">select *from student;</span><br><span class="line">$ bin/hive -f xxx/hivef.sql &gt; xxx/result.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-5-常用参数配置"><a href="#7-5-常用参数配置" class="headerlink" title="7.5 常用参数配置"></a>7.5 常用参数配置</h3><ul>
+<li>查询后信息显示配置 <code>conf/hive-site.xml</code></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 可以显示表头列名 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.cli.print.header<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 显示当前数据库名 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.cli.print.current.db<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="八、HBase-配置"><a href="#八、HBase-配置" class="headerlink" title="八、HBase 配置"></a>八、HBase 配置</h2><h3 id="8-1-集群配置"><a href="#8-1-集群配置" class="headerlink" title="8.1 集群配置"></a>8.1 集群配置</h3><ul>
+<li><code>conf/hbase-env.sh</code></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1、注释掉下面两行</span></span><br><span class="line"><span class="comment"># Configure PermSize. Only needed in JDK7. You can safely remove it for JDK8+</span></span><br><span class="line"><span class="built_in">export</span> HBASE_MASTER_OPTS=<span class="string">"<span class="variable">$HBASE_MASTER_OPTS</span> -XX:PermSize=128m -XX:MaxPermSize=128m"</span></span><br><span class="line"><span class="built_in">export</span> HBASE_REGIONSERVER_OPTS=<span class="string">"<span class="variable">$HBASE_REGIONSERVER_OPTS</span> -XX:PermSize=128m -XX:MaxPermSiz    e=128m"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、使用单独的 Zookeeper</span></span><br><span class="line"><span class="built_in">export</span> HBASE_MANAGES_ZK=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>conf/hbase-site.sh</code></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 都要根据自己的机器进行配置 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://hadoop102:9000/HBase<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">value</span>&gt;</span>hadoop102:2181,hadoop103:2181,hadoop104:2181<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">value</span>&gt;</span>/opt/module/zookeeper-3.4.10/zkData<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>启动</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 HDFS、Zookeeper</span></span><br><span class="line">$ start-dfs.sh</span><br><span class="line">$ <span class="variable">$&#123;Zookeeper_BASE&#125;</span>/bin/zkServer.sh start  <span class="comment"># 每个机器都要单独启动</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># HBase</span></span><br><span class="line">$ bin/hbase-daemon.sh start master   <span class="comment"># 在其中一台启动</span></span><br><span class="line">$ bin/hbase-daemon.sh start regionserver <span class="comment"># 都要启动</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 可以在 hadoop102:16010 查看ui界面</span></span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -893,10 +1029,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-10-13T18:23:57+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-10-21T18:19:16+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年10月13日</p>
+    <p>更新于 2020年10月21日</p>
   </a>
 </div>
 
@@ -1060,7 +1196,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Hadoop-配置"><span class="toc-text">三、Hadoop 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Zookeeper-配置"><span class="toc-text">四、Zookeeper 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-本地模式"><span class="toc-text">4.1 本地模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-集群模式"><span class="toc-text">4.2 集群模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-客户端操作"><span class="toc-text">4.3 客户端操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、Kakfa-配置"><span class="toc-text">五、Kakfa 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-环境准备"><span class="toc-text">5.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-集群配置"><span class="toc-text">5.2 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-命令行操作"><span class="toc-text">5.3 命令行操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Spark-配置"><span class="toc-text">六、Spark 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-环境准备"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-本地模式-Local"><span class="toc-text">6.2 本地模式 Local</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Standalone-模式"><span class="toc-text">6.3 Standalone 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-Spark-server配置"><span class="toc-text">6.3.1 Spark server配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-spark-history-server"><span class="toc-text">6.3.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Yarn-模式"><span class="toc-text">6.4 Yarn 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-1-spark-server-配置"><span class="toc-text">6.4.1 spark server 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-2-spark-history-server"><span class="toc-text">6.4.2 spark-history-server</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Hadoop-配置"><span class="toc-text">三、Hadoop 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-常用端口记录"><span class="toc-text">3.4 常用端口记录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Zookeeper-配置"><span class="toc-text">四、Zookeeper 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-本地模式"><span class="toc-text">4.1 本地模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-集群模式"><span class="toc-text">4.2 集群模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-客户端操作"><span class="toc-text">4.3 客户端操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、Kakfa-配置"><span class="toc-text">五、Kakfa 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-环境准备"><span class="toc-text">5.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-集群配置"><span class="toc-text">5.2 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-命令行操作"><span class="toc-text">5.3 命令行操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Spark-配置"><span class="toc-text">六、Spark 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-环境准备"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-本地模式-Local"><span class="toc-text">6.2 本地模式 Local</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Standalone-模式"><span class="toc-text">6.3 Standalone 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-Spark-server配置"><span class="toc-text">6.3.1 Spark server配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-spark-history-server"><span class="toc-text">6.3.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Yarn-模式"><span class="toc-text">6.4 Yarn 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-1-spark-server-配置"><span class="toc-text">6.4.1 spark server 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-2-spark-history-server"><span class="toc-text">6.4.2 spark-history-server</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、Hive-配置"><span class="toc-text">七、Hive 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-单机默认配置"><span class="toc-text">7.1 单机默认配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-修改默认数据库（derby-gt-MySQL）"><span class="toc-text">7.2 修改默认数据库（derby -&gt; MySQL）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-1-安装-MySQL"><span class="toc-text">7.2.1 安装 MySQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-2-修改-hive-元数据库"><span class="toc-text">7.2.2 修改 hive 元数据库</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Beeline-连接"><span class="toc-text">7.3 Beeline 连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-常用交互命令"><span class="toc-text">7.4 常用交互命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-常用参数配置"><span class="toc-text">7.5 常用参数配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、HBase-配置"><span class="toc-text">八、HBase 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-集群配置"><span class="toc-text">8.1 集群配置</span></a></li></ol></li></ol>
     </div>
   </section>
 
@@ -1231,7 +1367,7 @@
         
           <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(3)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(13)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(14)</div></a></li>
         
       </ul>
     </div>
@@ -1285,7 +1421,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 24px; color: #555">Hexo</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-压缩/" style="font-size: 14px; color: #999">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
