@@ -133,6 +133,25 @@ done
 
 改权限，`chmod +x xsync`
 
+- 执行相同命令脚本
+
+```bash
+#!/bin/bash
+pcount=$#
+if ((pcount==0)); then
+echo no args;
+exit;
+fi
+
+for i in hadoop102 hadoop103 hadoop104
+do
+        echo "==== $i $1 ===="
+        ssh $i "$1"
+done
+```
+
+移动到`/bin`，改权限
+
 - 自动配置网络脚本
 
 ```bash
@@ -194,7 +213,7 @@ $ hadoop version
 
 
 
-## 三、运行配置
+## 三、Hadoop 配置
 
 [Apache Hadoop 3.2.1 – Hadoop: Setting up a Single Node Cluster.](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/SingleCluster.html)
 
@@ -702,5 +721,771 @@ $ date -s "2017-9-11 11:11:11"
 $ service ntpd stop
 $ ntpdate us.pool.ntp.org
 $ service ntpd start
+
+# 或者直接
+$ sudo ntpdate -u pool.ntp.org
+```
+
+### 3.4 常用端口记录
+
+> [Hadoop默认端口应用一览_在路上的学习者-CSDN博客](https://blog.csdn.net/yeruby/article/details/49406073)
+>
+> [Hadoop常用端口号_baiBenny的博客-CSDN博客](https://blog.csdn.net/baiBenny/article/details/53887328)
+
+| 组件 | 节点     | 默认端口 | 配置                      | 用途说明                             |
+| ---- | -------- | -------- | ------------------------- | ------------------------------------ |
+| HDFS | NameNode | 50070    | dfs.namenode.http-address | http服务的端口，可查看 HDFS 存储内容 |
+| HBase | Master | 16000 |  | Master RPC Port（远程通信调用） |
+|  | Master | 16010 |  | Master Web Port |
+|  | Regionserver | 16020 |  | Regionserver RPC Port |
+|  | Regionserver | 16030 |  | Regionserver Web Port |
+|  |  |  |  |  |
+
+
+
+## 四、Zookeeper 配置
+
+### 4.1 本地模式
+
+**1、安装前准备**
+
+- 安装Jdk
+- 拷贝Zookeeper安装包到Linux系统下
+- 解压到指定目录
+
+```bash
+tar -zxvf zookeeper-3.4.10.tar.gz -C /opt/module/
+```
+
+**2、配置修改**
+
+- 修改`conf/zoo_sample.cfg`
+
+```bash
+cp zoo_sample.cfg zoo.cfg
+```
+
+- 修改 zoo.cfg 文件
+
+```bash
+dataDir=/opt/module/zookeeper-3.4.10/zkData
+```
+
+并创建 zkData 文件夹
+
+**3、操作Zookeeper**
+
+- 启动Zookeeper
+
+```bash
+$ bin/zkServer.sh start
+```
+
+- 查看进程是否启动
+
+```bash
+$ jps
+4020 Jps
+4001 QuorumPeerMain
+```
+
+- 查看状态：
+
+```bash
+$ bin/zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
+Mode: standalone
+```
+
+- 停止Zookeeper
+
+```bash
+$ bin/zkServer.sh stop
+```
+
+
+
+### 4.2 集群模式
+
+**1、配置**
+
+- 修改 zoo.cfg 文件
+
+```
+server.2=hadoop102:2888:3888
+server.3=hadoop103:2888:3888
+server.4=hadoop104:2888:3888
+# 2888 为集群间通信端口号
+# 3888 为选举端口号
+# server.2/3/4 为id，不相同即可
+```
+
+- 创建 `zkData/myid`，每个机器写不同的，要和前面的对应上
+
+```bash
+$ vim zkData/myid
+# hadoop102
+2
+# hadoop103
+3
+# hadoop104
+4
+```
+
+- 配置 `bin/zkEnv.sh`
+
+```sh
+# 替换前
+ZOO_LOG_DIR="."
+# 替换后
+ZOO_LOG_DIR="/opt/module/zookeeper-3.4.10/logs"
+
+# 添加 JAVA_HOME（远程启动的时候才是必要的，因为会丢失环境变量）
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+```
+
+- 同步 xsync
+
+**2、启动**
+
+```bash
+# 每个机器都要单独启动
+./bin/zkServer.sh start
+```
+
+仅启动一台机器时：
+
+```
+$ ./zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
+Error contacting service. It is probably not running.
+```
+
+启动两台机器（超过半数）：
+
+```
+$ ./zkServer.sh status
+ZooKeeper JMX enabled by default
+Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
+Mode: leader / follower
+```
+
+### 4.3 客户端操作
+
+- 启动
+
+```bash
+$ bin/zkCli.sh
+```
+
+- 执行
+
+| 命令基本语法     | 功能描述                                                     |
+| ---------------- | ------------------------------------------------------------ |
+| help             | 显示所有操作命令                                             |
+| ls path [watch]  | 使用 ls 命令来查看当前znode中所包含的内容                    |
+| ls2 path [watch] | 查看当前节点数据并能看到更新次数等数据                       |
+| create           | 普通创建<br/>-s  含有序列<br/>-e  临时（重启或者超时消失） |
+| get path [watch] | 获得节点的值                                                 |
+| set              | 设置节点的具体值                                             |
+| stat             | 查看节点状态                                                 |
+| delete           | 删除节点                                                     |
+| rmr              | 递归删除节点                                                 |
+
+
+
+## 五、Kakfa 配置
+
+### 5.1 环境准备
+
+- 在 hadoop102 103 104 上均安装 Kafka
+- jar 包下载 https://kafka.apache.org/downloads
+  - 命名中有两个版本号，第一个为 scala 版本，第二个是 kafka 版本
+
+### 5.2 集群配置
+
+- 修改 `config/server.properties`
+
+```
+# broker的全局唯一编号，不能重复
+broker.id=0
+
+# 删除topic功能使能（kafka 2.x 版本 不需要配置）
+delete.topic.enable=true
+
+# kafka运行时数据存放的路径
+log.dirs=/opt/module/kafka_2.12-2.3.1/data
+
+# 配置连接Zookeeper集群地址
+zookeeper.connect=hadoop102:2181,hadoop103:2181,hadoop104:2181
+```
+
+- 分发安装包到所有物理机上 xsync
+
+- 将 hadoop103 104 上`config/server.properties` 中的 `broker.id=x`进行修改
+
+
+
+**单点启动 / 停止** 
+
+依次在 hadoop102、hadoop103、hadoop104 节点上启动/停止 kafka，执行下面的命令
+
+```bash
+# 启动
+# 前台运行
+$ bin/kafka-server-start.sh config/server.properties
+# 后台运行
+$ bin/kafka-server-start.sh -daemon config/server.properties
+
+# 停止
+$ bin/kafka-server-stop.sh
+```
+
+
+
+**群起 / 群停**
+
+由于 Kafka 中没有给集群启动停止的脚本，需要自己写`kk-all.sh`
+
+需要注意：要先在 `~/.bashrc` 中配置 java 环境变量（xsync）
+
+```bash
+# JAVA_HOME
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+export PATH=$PATH:$JAVA_HOME/bin
+```
+
+```bash
+#!/bin/bash
+
+case $1 in
+"start"){
+        for i in hadoop102 hadoop103 hadoop104
+        do
+                echo "==== start $i kafka ===="
+                # ssh $i "source /etc/profile"
+                ssh $i "/opt/module/kafka_2.12-2.3.1/bin/kafka-server-start.sh -daemon /opt/module/kafka_2.12-2.3.1/config/server.properties"
+        done
+};;
+
+"stop"){
+        for i in hadoop102 hadoop103 hadoop104
+        do
+                echo "==== stop $i kafka ===="
+                # ssh $i "source /etc/profile"
+                ssh $i "/opt/module/kafka_2.12-2.3.1/bin/kafka-server-stop.sh"
+        done
+};;
+
+esac
+```
+
+启动/停止 Kafka：（记得先启动 Zookeeper）
+
+```bash
+$ ./kk-all.sh start
+$ jps
+1637 QuorumPeerMain
+6071 Kafka
+6538 Jps
+
+$ ./kk-all.sh stop
+```
+
+### 5.3 命令行操作
+
+- 查看当前服务器中的所有 topic
+
+```bash
+$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --list
+```
+
+- 创建 topic
+
+```bash
+$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --create --replication-factor 3 --partitions 1 --topic first
+```
+
+`--replication-factor` 定义副本数；` --partitions` 定义分区数
+
+- 删除 topic
+
+```bash
+$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --delete --topic first
+```
+
+- 查看某个 Topic 的详情
+
+```bash
+$ bin/kafka-topics.sh --zookeeper hadoop102:2181 --describe --topic first
+```
+
+- 发送消息
+
+```bash
+$ bin/kafka-console-producer.sh --broker-list hadoop102:9092 --topic first
+>hello world
+>atguigu atguigu
+```
+
+- 消费消息
+
+```bash
+$ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first
+```
+
+`--from-beginning` 会把 first 主题中以往所有的数据都读取出来
+
+
+
+## 六、Spark 配置
+
+### 6.1 环境准备
+
+下载地址：https://archive.apache.org/dist/spark/
+
+有两种版本，hadoop 版下载就能用，不依赖其他组价；without-hadoop 需要依赖已有的 hadoop 组件
+
+> spark-2.3.2-bin-hadoop2.7.tgz
+> spark-2.3.2-bin-without-hadoop.tgz 
+
+### 6.2 本地模式 Local
+
+解压后进入 Spark 根目录执行（一个算 PI 的程序）：
+
+```bash
+bin/spark-submit \
+--class org.apache.spark.examples.SparkPi \
+--master local[2] \
+./examples/jars/spark-examples_2.11-2.3.2.jar 100
+
+bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.11-2.3.2.jar 100
+```
+
+输出结果：
+
+```bash
+# 一大堆迭代过程 
+Pi is roughly 3.1424043142404314
+```
+
+可以通过访问 http://hadoop102:4040 查看任务运行情况
+
+**「问题」**：运行结束这个页面就关闭了，不能查历史任务执行情况
+
+**「解决」**：添加 Spark History Server
+
+### 6.3 Standalone 模式
+
+构建一个由 Master + Slave 构成的 Spark 集群，Spark 运行在集群中。
+
+这个要和 Hadoop 中的 Standalone 区别开来.这里的 Standalone 是指只用 Spark 来搭建一个集群, 不需要借助其他的框架.是相对于 Yarn 和 Mesos 来说的.
+
+#### 6.3.1 Spark server配置
+
+1、进入配置文件目录conf，配置spark-evn.sh
+
+```bash
+cd conf/
+cp spark-env.sh.template spark-env.sh
+```
+
+在 `spark-env.sh` 文件中配置如下内容:
+
+```bash
+SPARK_MASTER_HOST=hadoop102
+SPARK_MASTER_PORT=7077 # 默认端口就是7077, 可以省略不配
+```
+
+2、修改 slaves 文件，添加 worker 节点
+
+```bash
+cp slaves.template slaves
+# 在slaves文件中配置如下内容:
+hadoop201
+hadoop202
+hadoop203
+```
+
+3、修改 sbin/spark-config.sh，添加 JAVA_HOME （防止 JAVA_HOME is not set 报错）
+
+```bash
+export JAVA_HOME=/opt/module/jdk1.8.0_144
+```
+
+4、分发spark-standalone
+
+5、启动 Spark 集群
+
+```bash
+sbin/start-all.sh
+```
+
+6、网页查看信息：http://hadoop102:8080/
+
+7、测试
+
+```bash
+bin/spark-submit \
+--class org.apache.spark.examples.SparkPi \
+--master spark://hadoop102:7077 \
+--executor-memory 1G \
+--total-executor-cores 6 \
+--executor-cores 2 \
+./examples/jars/spark-examples_2.11-2.3.2.jar 100
+```
+
+#### 6.3.2 spark-history-server
+
+在 Spark-shell 没有退出之前，看到正在执行的任务的日志情况:http://hadoop102:4040. 但是退出之后，执行的所有任务记录全部丢失
+
+所以需要配置任务的历史服务器, 方便在任何需要的时候去查看日志。
+
+- 配置spark-default.conf文件，开启 Log
+
+```bash
+cp spark-defaults.conf.template spark-defaults.conf
+```
+
+在 `spark-defaults.conf` 文件中, 添加如下内容:
+
+```bash
+spark.eventLog.enabled           true
+spark.eventLog.dir               hdfs://hadoop102:9000/spark-job-log
+```
+
+注意:
+
+`hdfs://hadoop201:9000/spark-job-log` 目录必须提前存在, 名字随意
+
+- 修改spark-env.sh文件，添加如下配置
+
+```bash
+export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=18080 -Dspark.history.retainedApplications=30 -Dspark.history.fs.logDirectory=hdfs://hadoop102:9000/spark-job-log"
+```
+
+- 分发配置文件
+- 启动历史服务
+  - 需要先启动 HDFS `$HADOOP_HOME/sbin/start-dfs.sh`
+  - 然后再启动: `sbin/start-history-server.sh`
+
+ui 地址: http://hadoop102:18080
+
+### 6.4 Yarn 模式
+
+#### 6.4.1 spark server 配置
+
+- 修改 `conf/spark-env.sh`
+
+```
+YARN_CONF_DIR=/opt/module/hadoop-2.7.2/etc/hadoop
+```
+
+- 测试
+
+```bash
+bin/spark-submit \
+--class org.apache.spark.examples.SparkPi \
+--master yarn \
+--deploy-mode client \
+./examples/jars/spark-examples_2.11-2.3.2.jar 100
+```
+
+Yarn：http://hadoop103:8088
+
+#### 6.4.2 spark-history-server
+
+`$HADOOP_HOME/etc/hadoop/yarn-site.xml` 中添加
+
+```xml
+    <property>
+        <name>yarn.log.server.url</name>
+        <value>http://hadoop104:19888/jobhistory/logs</value>
+        <!-- 填 yarn historyserver 的物理机  -->
+    </property>
+```
+
+`$SPARK_HOME/conf/spark-defaults.conf`
+
+```xml
+spark.yarn.historyServer.address	hadoop102:18080    # spark history Server 物理机
+spark.history.ui.port 						18080
+spark.eventLog.enabled 						true
+spark.eventLog.dir               	hdfs://hadoop102:9000/spark-job-log
+spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log
+```
+
+【可以正常展示了】
+
+相关文档解释：[spark深入：配置文件与日志 - Super_Orco - 博客园](https://www.cnblogs.com/sorco/p/7070922.html)
+
+- 查看方式
+  - 通过 YARN 查询
+    - http://hadoop103:8088/
+  - 直接在 spark history server 中查询
+    - http://hadoop102:18080/
+
+
+
+## 七、Hive 配置
+
+### 7.1 单机默认配置
+
+下载地址：http://archive.apache.org/dist/hive/
+
+**安装部署：**
+
+- 修改 `conf/hive-env.sh.template` 
+
+```bash
+$ mv hive-env.sh.template hive-env.sh
+$ vim hive-env.sh
+~
+~
+export HADOOP_HOME=/opt/module/hadoop-2.7.2
+export HIVE_CONF_DIR=/opt/module/hive-2.3.0-bin/conf
+~
+~
+```
+
+- hadoop 相关配置
+
+```bash
+# 启动 hdfs yarn
+$ start-dfs.sh
+$ start-yarn.sh
+
+# 创建 hive warehouse（存数据的地方）
+$ hadoop fs -mkdir /tmp
+$ hadoop fs -mkdir -p /user/hive/warehouse
+$ hadoop fs -chmod g+w /tmp
+$ hadoop fs -chmod g+w /user/hive/warehouse
+```
+
+- Hive 基本操作 
+
+```bash
+$ bin/hive
+# 查看数据库
+hive> show databases;
+# 打开默认数据库 
+hive> use default;
+# 显示 default 数据库中的表 
+hive> show tables;
+# 创建一张表
+hive> create table student(id int, name string);
+# 查看表的结构 
+hive> desc student;
+# 向表中插入数据
+hive> insert into student values(1000,"ss");
+# 查询表中数据
+hive> select * from student;
+# 退出 
+hive hive> quit;
+```
+
+### 7.2 修改默认数据库（derby -> MySQL）
+
+derby 只支持单个客户端连接，仅适用于简单测试。更换成关系型数据库（如MySQL），可支持多客户端连接。
+
+#### 7.2.1 安装 MySQL
+
+- 卸载原有的，安装新的 MySQL 
+
+```bash
+# 卸载原有的
+$ su -  # 切换到 root 用户
+$ rpm -qa | grep mysql 
+mysql-libs-5.1.73-7.el6.x86_64
+$ rpm -e --nodeps mysql-libs-5.1.73-7.el6.x86_64
+
+# 安装新的 MySQL-server
+$ rpm -ivh MySQL-server-5.6.24-1.el6.x86_64.rpm
+cat /root/.mysql_secret # 记住默认的root登录密码
+OEXaQuS8IWkG19Xs
+$ service mysql status
+$ service mysql start
+
+# 安装 MySQL-client
+$ rpm -ivh MySQL-client-5.6.24-1.el6.x86_64.rpm
+# 修改 root 密码
+$ mysql -uroot -pOEXaQuS8IWkG19Xs
+mysql>SET PASSWORD=PASSWORD('123456');
+mysql>exit
+```
+
+- 配置 MySQL 远程登录
+
+```bash
+$ mysql -uroot -p123456
+mysql> use mysql;
+mysql> show tables;
+mysql> select User, Host, Password from user;
+
+# 修改 user 表，把 Host 表内容修改为%
+mysql> update user set host='%' where host='localhost';
+# 其他的都删掉
+mysql> delete from user where host='hadoop102';
+mysql> delete from user where host='127.0.0.1';
+mysql> delete from user where host='::1';
+
+mysql> flush privileges;
+mysql> quit;
+
+# 都做完切换回原来的用户
+```
+
+#### 7.2.2 修改 hive 元数据库
+
+- 拷贝驱动
+
+```bash
+$ cp mysql-connector-java-5.1.27-bin.jar /opt/module/hive-2.3.0-bin/lib/
+```
+
+- 配置 Metastore 到 MySQL
+
+创建 `conf/hive-site.xml` 
+
+> 官方配置文档
+> [AdminManual Metastore Administration - Apache Hive - Apache Software Foundation](https://cwiki.apache.org/confluence/display/Hive/AdminManual+Metastore+Administration)
+
+```xml
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?> 
+<configuration>
+<property> 
+	<name>javax.jdo.option.ConnectionURL</name>
+	<value>jdbc:mysql://hadoop102:3306/metastore?createDatabaseIfNotExist=true</value>
+	<description>JDBC connect string for a JDBC metastore</description>
+</property>
+<property>
+	<name>javax.jdo.option.ConnectionDriverName</name> 	
+  <value>com.mysql.jdbc.Driver</value>
+	<description>Driver class name for a JDBC metastore</description>
+</property>
+<property>
+	<name>javax.jdo.option.ConnectionUserName</name>
+	<value>root</value>
+	<description>username to use against metastore database</description>
+</property>
+<property>
+	<name>javax.jdo.option.ConnectionPassword</name> 
+  <value>123456</value>
+	<description>password to use against metastore database</description>
+</property>
+</configuration>
+```
+
+- 启动
+
+```bash
+# 初试化hive库
+$ bin/schematool -initSchema -dbType mysql
+# 启动metastore节点
+$ nohup bin/hive --service metastore &
+# 启动hiveserver2（可选？） 
+$ nohup bin/hive --service hiveserver2 &
+# 命令行启动
+$ bin/hive
+```
+
+### 7.3 Beeline 连接
+
+> Hive学习之路 （四）Hive的连接3种连接方式 - 扎心了，老铁 - 博客园
+> https://www.cnblogs.com/qingyunzong/p/8715925.html
+
+### 7.4 常用交互命令
+
+1、`-e`不进入 hive 的交互窗口执行 sql 语句 
+
+```bash
+$ bin/hive -e "select id from student;"
+```
+
+2、`-f`执行脚本中 sql 语句 
+
+- 创建 hivef.sql 文件
+
+```bash
+$ touch hivef.sql
+select *from student;
+$ bin/hive -f xxx/hivef.sql > xxx/result.txt
+```
+
+### 7.5 常用参数配置
+
+- 查询后信息显示配置 `conf/hive-site.xml `
+
+```xml
+<!-- 可以显示表头列名 -->
+<property> 
+	<name>hive.cli.print.header</name> 
+  <value>true</value>
+</property>
+<!-- 显示当前数据库名 -->
+<property> 
+  <name>hive.cli.print.current.db</name> 
+  <value>true</value>
+</property>
+```
+
+
+
+## 八、HBase 配置
+
+### 8.1 集群配置
+
+- `conf/hbase-env.sh`
+
+```bash
+# 1、注释掉下面两行
+# Configure PermSize. Only needed in JDK7. You can safely remove it for JDK8+
+export HBASE_MASTER_OPTS="$HBASE_MASTER_OPTS -XX:PermSize=128m -XX:MaxPermSize=128m"
+export HBASE_REGIONSERVER_OPTS="$HBASE_REGIONSERVER_OPTS -XX:PermSize=128m -XX:MaxPermSiz    e=128m"
+
+# 2、使用单独的 Zookeeper
+export HBASE_MANAGES_ZK=false
+```
+
+- `conf/hbase-site.sh`
+
+```xml
+<!-- 都要根据自己的机器进行配置 -->
+		<property>
+            <name>hbase.rootdir</name>
+            <value>hdfs://hadoop102:9000/HBase</value>
+    </property>
+
+    <property>
+            <name>hbase.cluster.distributed</name>
+            <value>true</value>
+    </property>
+
+    <property>
+            <name>hbase.zookeeper.quorum</name>
+         <value>hadoop102:2181,hadoop103:2181,hadoop104:2181</value>
+    </property>
+
+    <property>
+            <name>hbase.zookeeper.property.dataDir</name>
+         <value>/opt/module/zookeeper-3.4.10/zkData</value>
+    </property>
+```
+
+- 启动
+
+```bash
+# 启动 HDFS、Zookeeper
+$ start-dfs.sh
+$ ${Zookeeper_BASE}/bin/zkServer.sh start  # 每个机器都要单独启动
+
+# HBase
+$ bin/hbase-daemon.sh start master   # 在其中一台启动
+$ bin/hbase-daemon.sh start regionserver # 都要启动
+
+# 可以在 hadoop102:16010 查看ui界面
 ```
 
