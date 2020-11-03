@@ -739,7 +739,7 @@ $ sudo ntpdate -u pool.ntp.org
 |  | Master | 16010 |  | Master Web Port |
 |  | Regionserver | 16020 |  | Regionserver RPC Port |
 |  | Regionserver | 16030 |  | Regionserver Web Port |
-|  |  |  |  |  |
+| Spark |  | 4040 |  | 查看 Spark Job |
 
 
 
@@ -1053,6 +1053,8 @@ $ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginni
 
 ### 6.2 本地模式 Local
 
+- Jar
+
 解压后进入 Spark 根目录执行（一个算 PI 的程序）：
 
 ```bash
@@ -1076,6 +1078,22 @@ Pi is roughly 3.1424043142404314
 **「问题」**：运行结束这个页面就关闭了，不能查历史任务执行情况
 
 **「解决」**：添加 Spark History Server
+
+- Spark-shell
+
+进入 Spark-shell，`bin/spark-shell`
+
+```bash
+# 创建两个文件，里面输入几行单词
+$ vim 1.txt  # xxxxx
+$ vim 2.txt  # xxxxx
+
+# 进入 spark-shell 执行
+$ bin/spark-shell
+> sc.textFile("input").flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_).collect
+```
+
+
 
 ### 6.3 Standalone 模式
 
@@ -1177,20 +1195,44 @@ ui 地址: http://hadoop102:18080
 
 #### 6.4.1 spark server 配置
 
-- 修改 `conf/spark-env.sh`
+- 修改 `${HADOOP_HOME}/etc/hadoop/yarn-site.xml`（仅虚拟机中配置，防止内存不够）
+
+```xml
+    <!--是否启动一个线程检查每个任务正使用的物理内存量，如果任务超出分配值，则直接将其杀掉，默>认是true -->
+    <property>
+        <name>yarn.nodemanager.pmem-check-enabled</name>
+        <value>false</value>
+    </property>
+    <!--是否启动一个线程检查每个任务正使用的虚拟内存量，如果任务超出分配值，则直接将其杀掉，默>认是true -->
+    <property>
+        <name>yarn.nodemanager.vmem-check-enabled</name>
+        <value>false</value>
+    </property>
+```
+
+- 修改 `conf/spark-env.sh`，分发
 
 ```
 YARN_CONF_DIR=/opt/module/hadoop-2.7.2/etc/hadoop
 ```
 
-- 测试
+- 测试（注意 master、deploy-mode 参数的变化）
 
 ```bash
+$ start-dfs.sh
+$ start-yarn.sh
+
 bin/spark-submit \
 --class org.apache.spark.examples.SparkPi \
 --master yarn \
 --deploy-mode client \
 ./examples/jars/spark-examples_2.11-2.3.2.jar 100
+```
+
+- spark-shell
+
+```bash
+$ bin/spark-shell --master yarn
 ```
 
 Yarn：http://hadoop103:8088
@@ -1217,6 +1259,13 @@ spark.eventLog.dir               	hdfs://hadoop102:9000/spark-job-log
 spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log
 ```
 
+- 相关服务
+  - spark: `sbin/start-all.sh`
+  - HDFS: `[hadoop102]$ start-dfs.sh`
+  - Yarn: `[hadoop103]$ start-yarn.sh`
+  - Yarn-history: `[hadoop104]$ mr-jobhistory-daemon.sh start historyserver`
+  - Spark-history: `[hadoop102] $ sbin/start-history-server.sh`
+
 【可以正常展示了】
 
 相关文档解释：[spark深入：配置文件与日志 - Super_Orco - 博客园](https://www.cnblogs.com/sorco/p/7070922.html)
@@ -1227,7 +1276,9 @@ spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log
   - 直接在 spark history server 中查询
     - http://hadoop102:18080/
 
+### 6.5 WordCount 程序
 
+略
 
 ## 七、Hive 配置
 
@@ -1475,7 +1526,7 @@ export HBASE_MANAGES_ZK=false
     </property>
 ```
 
-- 启动
+- 单独启动
 
 ```bash
 # 启动 HDFS、Zookeeper
@@ -1486,6 +1537,194 @@ $ ${Zookeeper_BASE}/bin/zkServer.sh start  # 每个机器都要单独启动
 $ bin/hbase-daemon.sh start master   # 在其中一台启动
 $ bin/hbase-daemon.sh start regionserver # 都要启动
 
+$ bin/hbase-daemon.sh stop master   # 在其中一台启动
+$ bin/hbase-daemon.sh stop regionserver # 都要启动
+
 # 可以在 hadoop102:16010 查看ui界面
+```
+
+- 群起 / 群停
+
+```bash
+# 启动 HDFS、Zookeeper
+$ start-dfs.sh
+$ ${Zookeeper_BASE}/bin/zkServer.sh start  # 每个机器都要单独启动
+
+# 配置 conf/regionservers，添加所有 regionserver 的 host
+hadoop102
+hadoop103
+hadoop104
+
+# 群起 / 群停
+$ bin/start-hbase.sh
+$ bin/stop-hbase.sh
+
+# regionservers
+$ bin/hbase-daemons.sh start regionserver
+$ bin/hbase-daemons.sh stop regionserver
+```
+
+### 8.2 常用操作
+
+使用 `help` 查看各种命令使用方式
+
+```bash
+# 列出所有指令
+> help
+
+# 查看某一组命令的帮助
+> help 'COMMAND_GROUP'
+
+# 查看单个命令帮助
+> help 'COMMAND'
+```
+
+#### 8.2.1 namespace
+
+`Commands: alter_namespace, create_namespace, describe_namespace, drop_namespace, list_namespace, list_namespace_tables`
+
+- list_namespace
+
+```bash
+# 查看所有库名
+> list_namespace
+```
+
+- create_namespace
+
+```bash
+> create_namespace 'school'
+```
+
+- delete_namespace
+
+```bash
+# 注意：只能删除空库
+> delete_namespace 'school'
+```
+
+- list_namespace_tables
+
+```bash
+# 列出库中所有表
+> list_namespace_tables 'school'
+```
+
+#### 8.2.2 DDL
+
+`Commands: alter, alter_async, alter_status, create, describe, disable, disable_all, drop, drop_all, enable, enable_all, exists, get_table, is_disabled, is_enabled, list, locate_region, show_filters`
+
+- list
+
+```bash
+# list 列出所有表
+> list
+```
+
+- create
+
+```bash
+# create '库名:表名', { NAME => '列族名1', 属性名 => 属性值}, {NAME => '列族名2', 属性名 => 属性值}, …
+> create 'school:student', {NAME=>'info'}
+> create 'school:student', {NAME=>'info', VERSIONS=>5}
+
+# 如果你只需要创建列族，而不需要定义列族属性，那么可以采用以下快捷写法：
+# create'表名','列族名1' ,'列族名2', …
+# 不写库名，默认 namespace 为 default
+> create 'student','info'
+```
+
+- desc
+
+```bash
+> desc 'student'
+```
+
+- disable
+
+```bash
+# 停用表，防止对表进行写数据；在修改或删除表之前要 disable
+> disable 'student'
+> is_disable 'student'
+```
+
+- enable
+
+```bash
+# 启用表
+> enable 'student'
+> is_enable 'student'
+```
+
+- alter
+
+```bash
+# 需要先 disable
+> alter 'student', {NAME => 'info', VERSIONS => '5'}
+```
+
+- drop
+
+```bash
+# 需要先 disable
+> drop 'student'
+```
+
+- count
+
+```bash
+# 查看行数
+> count 'student'
+```
+
+- truncate
+
+```bash
+# 删除表数据
+> truncate 'student'
+```
+
+#### 8.2.3 DML
+
+` Commands: append, count, delete, deleteall, get, get_counter, get_splits, incr, put, scan, truncate, truncate_preserve`
+
+- scan
+
+```bash
+# 查看数据
+> scan 'student', {limit => 5}
+# 查看每行最近十次修改的数据
+> scan 'student', {RAW => true, VERSIONS => 10}
+```
+
+- put
+
+```bash
+# put '表名', '行键', '列族:列名', '值'
+> put 'student', '1001', 'info:name', 'Nick'
+```
+
+- get
+
+```bash
+> get 'student','1001'
+```
+
+- delete
+
+```bash
+# 删除某rowkey的全部数据：
+> deleteall 'student', '1001'
+# 删除某rowkey的某一列数据：
+> delete 'student', '1002', 'info:sex'
+```
+
+#### 8.2.4 其他操作
+
+- flush
+
+```bash
+# 将内存数据落盘
+> flush 'student'
 ```
 
