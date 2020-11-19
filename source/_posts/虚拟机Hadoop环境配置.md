@@ -741,7 +741,14 @@ $ sudo ntpdate -u pool.ntp.org
 |  | Regionserver | 16030 |  | Regionserver Web Port |
 | Spark |  | 4040 |  | 查看 Spark Job |
 
+### 3.5 HA
 
+- 配置两个 NameNode
+- 配置 JournalNode 用于将 Active NN 的数据 同步到 Standby NN 上「解决元数据同步的问题」
+- 配置 Zookeeper，解决主备 NN 切换的问题，防止脑裂
+- 在 NN 上启动 failoverController（zkfc），作为 Zookeeper 的客户端，实现与 zk 集群的交互和监测
+
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20201110104755190.png" alt="image-20201110104755190" style="zoom: 33%;" />
 
 ## 四、Zookeeper 配置
 
