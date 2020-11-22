@@ -1,3 +1,14 @@
+---
+type: blog
+title: Spark
+date: 2020-11-05
+categories: 教程
+tags: Spark, 教程
+cover: false
+meta:
+  date: false
+---
+
 # Spark
 
 ## 一、SparkCore
@@ -13,6 +24,8 @@ listRdd.foreach(println)
 val arrayRDD: RDD[Int] = sc.parallelize(Array(1, 2, 3, 4))
 arrayRDD.foreach(println)
 ```
+
+
 
 - 由外部存储系统的数据集创建
 
