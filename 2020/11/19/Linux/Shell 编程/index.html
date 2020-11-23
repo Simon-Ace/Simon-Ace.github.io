@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>Mac安装node | Rookie的博客</title>
+  <title>Shell 编程 | Rookie的博客</title>
   
   
 
@@ -226,8 +226,8 @@
         
   
     <h1 class="title">
-      <a href="/2020/07/10/Mac安装node/">
-        Mac安装node
+      <a href="/2020/11/19/Linux/Shell 编程/">
+        Shell 编程
       </a>
     </h1>
   
@@ -258,7 +258,7 @@
             <div class="new-meta-item date">
   <a class='notlink'>
     <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2020-07-10</p>
+    <p>2020-11-19</p>
   </a>
 </div>
 
@@ -310,57 +310,55 @@
 
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
-        <p>Mac安装及降级node版本</p>
-<a id="more"></a>
+        <h2 id="0-基础"><a href="#0-基础" class="headerlink" title="0 基础"></a>0 基础</h2><p>第一行</p>
+<p>指明脚本应使用的解释器的名字</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /bin/bash</span></span><br></pre></td></tr></table></figure>
+
+<p>编程规范：</p>
+<ul>
+<li>大写字母表示常量，小写字母表示变量</li>
+</ul>
+<h2 id="1-变量"><a href="#1-变量" class="headerlink" title="1 变量"></a>1 变量</h2><p><strong>变量</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意等号两边不能有空格</span></span><br><span class="line">foo=<span class="string">"yes"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$foo</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 有空格的字符串需要用引号包围</span></span><br><span class="line">b=<span class="string">"abc efg"</span>	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用其他变量的值</span></span><br><span class="line">c=<span class="string">"hhh <span class="variable">$b</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将执行命令的结果赋值</span></span><br><span class="line">d=$(ls -la)	</span><br><span class="line">d1=`ls -la` <span class="comment"># ``等价 $()</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 算数扩展，注意是两个括号</span></span><br><span class="line">e=$((5*7))	</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用&#123;&#125;限定变量名的范围</span></span><br><span class="line">f=aa.txt</span><br><span class="line">g=<span class="variable">$&#123;f&#125;</span>1</span><br></pre></td></tr></table></figure>
+
+<p><strong>环境变量</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> xx=xxx		<span class="comment"># 设置环境变量</span></span><br><span class="line"><span class="built_in">source</span> xxx_file	<span class="comment"># 让文件中的环境变量立即生效</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$xx</span>				<span class="comment"># 输出变量的值</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>位置参数变量</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$n</span>		<span class="comment"># $0为命令本身；$1-$9代表第一到第九个参数；$&#123;10&#125;十以上的用大括号括起来</span></span><br><span class="line">$*		<span class="comment"># 代表命令行中所有参数，并把所有参数看成一个整体</span></span><br><span class="line"><span class="variable">$@</span>		<span class="comment"># 代表命令行中所有参数，但把每个参数区分对待？</span></span><br><span class="line"><span class="variable">$#</span>		<span class="comment"># 参数个数</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>预定义变量</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$$		<span class="comment"># 当前进程号</span></span><br><span class="line">$!		<span class="comment"># 后台运行的最后一个进程的进程号</span></span><br><span class="line">$?		<span class="comment"># 最后一次执行命令的返回状态，0代表成功，其他都是失败 可自定义</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-条件判断"><a href="#2-条件判断" class="headerlink" title="2 条件判断"></a>2 条件判断</h2><p><strong>运算符</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$((m+n))			<span class="comment"># $(()) 中间写运算式</span></span><br><span class="line">$[m+n]				<span class="comment"># 推荐这种方式</span></span><br><span class="line">expr m + n		<span class="comment"># 不推荐</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>条件判断</strong></p>
+<p>test</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 写法一</span></span><br><span class="line"><span class="built_in">test</span> expression</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写法二</span></span><br><span class="line">[ expression ]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 写法三</span></span><br><span class="line">[[ expression ]]		<span class="comment"># 推荐使用这种写法，包含前两种的用法，且还支持模式匹配</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 数字判断</span></span><br><span class="line">(( expression ))</span><br></pre></td></tr></table></figure>
+
+<p>字符串判断</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[ -n string ]				<span class="comment"># 如果字符串string的长度大于零，则为真</span></span><br><span class="line">[ -z string ]				<span class="comment"># 如果字符串string的长度为零，则为真</span></span><br><span class="line">[ string1 = string2 ]		<span class="comment"># 如果string1和string2相同，则为真</span></span><br><span class="line">[ string1 == string2 ] 	<span class="comment"># 等同于[ string1 = string2 ]</span></span><br><span class="line">[ string1 != string2 ]	<span class="comment"># 如果string1和string2不相同，则为真</span></span><br><span class="line">[ string1 <span class="string">'&gt;'</span> string2 ]	<span class="comment"># 如果按照字典顺序string1排列在string2之后，则为真</span></span><br><span class="line">[ string1 <span class="string">'&lt;'</span> string2 ]	<span class="comment"># 如果按照字典顺序string1排列在string2之前，则为真</span></span><br></pre></td></tr></table></figure>
+
+<p>整数判断</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(( m &gt; n ))		<span class="comment"># 可以直接用 &gt; &lt; == &gt;= &lt;= !=，空格都要有！</span></span><br></pre></td></tr></table></figure>
+
+<p>逻辑判断</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ expr1 &amp;&amp; expr2 ]]	<span class="comment"># &amp;&amp; || !</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-流控制"><a href="#3-流控制" class="headerlink" title="3 流控制"></a>3 流控制</h2><p>if</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [[ <span class="variable">$x</span> = 5 ]]; <span class="keyword">then</span>			<span class="comment"># 等号两边有空格，也可以用 == 代替</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"x=5"</span></span><br><span class="line"><span class="keyword">elif</span> [[ <span class="variable">$x</span> = 10 ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"x=10"</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"no"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p>case</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> $变量名 <span class="keyword">in</span></span><br><span class="line"><span class="string">"值 1"</span>）</span><br><span class="line">如果变量的值等于值 1，则执行程序 1</span><br><span class="line">;;</span><br><span class="line"></span><br><span class="line"><span class="string">"值 2"</span>）</span><br><span class="line">如果变量的值等于值 2，则执行程序 2</span><br><span class="line">;;</span><br><span class="line"></span><br><span class="line">*）</span><br><span class="line">如果变量的值都不是以上的值，则执行此程序</span><br><span class="line">;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>while</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#! /bin/bash</span></span><br><span class="line">a=5</span><br><span class="line"><span class="keyword">while</span> [[ <span class="variable">$a</span>&gt;0 ]]; <span class="keyword">do</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="variable">$a</span></span><br><span class="line">		a=$(( a-1 ))</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="built_in">echo</span> finish</span><br></pre></td></tr></table></figure>
+
+<p>for</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (( i=0; i&lt;5; i++ )); <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># =========================</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> A B C D; <span class="keyword">do</span></span><br><span class="line">	<span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
 
 
-
-<h2 id="1-安装最新版Node"><a href="#1-安装最新版Node" class="headerlink" title="1 安装最新版Node"></a>1 安装最新版Node</h2><ol>
-<li>安装HomeBrew</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e <span class="string">"<span class="variable">$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)</span>"</span></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>安装Node</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install node</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>验证Node是否安装成功</li>
-</ol>
-<p>输入下面两条指令看是否可以都输出版本号</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure>
-
-<h2 id="2-降级Node"><a href="#2-降级Node" class="headerlink" title="2 降级Node"></a>2 降级Node</h2><p>由于开发需要或版本兼容性，需要安装低版本的Node，按下面的方式操作</p>
-<ol>
-<li><p>卸载Node</p>
-<p>如果你是按前面的方法安装的Node，则用下面的命令卸载</p>
-</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew uninstall node</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>查看可用的Node版本</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew search node</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">==&gt; Formulae</span><br><span class="line">libbitcoin-node      node                 node-sass            node@12            nodebrew             nodenv			llnode               node-build           node@10              node_exporter        nodeenv</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>安装你需要的版本</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里安装v12版本</span></span><br><span class="line">brew install node@12</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>连接Node</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew link node@12</span><br><span class="line"><span class="comment"># 这一步可能会报错, 按照提示执行命令就ok了, 比如我最后执行的是brew link --overwrite --force node@12</span></span><br></pre></td></tr></table></figure>
-
-<ol start="5">
-<li>检查Node是否安装成功</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
       </div>
       
         <br>
@@ -371,10 +369,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-07-10T14:24:18+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-11-23T18:34:45+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年7月10日</p>
+    <p>更新于 2020年11月23日</p>
   </a>
 </div>
 
@@ -383,7 +381,7 @@
         
           
   
-  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/教程/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>教程</p></a></div>
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/shell-linux-教程/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>shell, linux, 教程</p></a></div>
 
 
         
@@ -396,7 +394,7 @@
       
         <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
           
-          href="http://connect.qq.com/widget/shareqq/index.html?url=https://simon-ace.github.io/2020/07/10/Mac安装node/&title=Mac安装node | Rookie的博客&summary=Mac安装及降级node版本"
+          href="http://connect.qq.com/widget/shareqq/index.html?url=https://simon-ace.github.io/2020/11/19/Linux/Shell 编程/&title=Shell 编程 | Rookie的博客&summary="
           
           >
           
@@ -408,7 +406,7 @@
       
         <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
           
-          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://simon-ace.github.io/2020/07/10/Mac安装node/&title=Mac安装node | Rookie的博客&summary=Mac安装及降级node版本"
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://simon-ace.github.io/2020/11/19/Linux/Shell 编程/&title=Shell 编程 | Rookie的博客&summary="
           
           >
           
@@ -420,7 +418,7 @@
       
         <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
           
-          href="http://service.weibo.com/share/share.php?url=https://simon-ace.github.io/2020/07/10/Mac安装node/&title=Mac安装node | Rookie的博客&summary=Mac安装及降级node版本"
+          href="http://service.weibo.com/share/share.php?url=https://simon-ace.github.io/2020/11/19/Linux/Shell 编程/&title=Shell 编程 | Rookie的博客&summary="
           
           >
           
@@ -444,35 +442,21 @@
       
           <div class="prev-next">
               
-                  <section class="prev">
-                      <span class="art-item-left">
-                          <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
-                          <h4>
-                              <a href="/2020/07/10/hello-world/" rel="prev" title="Hello World">
-                                
-                                    Hello World
-                                
-                              </a>
-                          </h4>
-                          
-                      </span>
-                  </section>
-              
               
                   <section class="next">
                       <span class="art-item-right" aria-hidden="true">
                           <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
                           <h4>
-                              <a href="/2020/07/10/Mac使用代理ssh远程连接服务器/" rel="prev" title="Mac使用代理ssh远程连接服务器">
+                              <a href="/2020/11/05/Spark/" rel="prev" title="Spark">
                                   
-                                      Mac使用代理ssh远程连接服务器
+                                      Spark
                                   
                               </a>
                           </h4>
                           
                               
                               <h6 class="tags">
-                                  <a class="tag" href="/tags/教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 教程</a>
+                                  <a class="tag" href="/tags/Spark-教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Spark, 教程</a>
                               </h6>
                           
                       </span>
@@ -502,7 +486,7 @@
 
   <script>
     window.subData = {
-      title: 'Mac安装node',
+      title: 'Shell 编程',
       tools: true
     }
   </script>
@@ -533,7 +517,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-安装最新版Node"><span class="toc-text">1 安装最新版Node</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-降级Node"><span class="toc-text">2 降级Node</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-基础"><span class="toc-text">0 基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-变量"><span class="toc-text">1 变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-条件判断"><span class="toc-text">2 条件判断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-流控制"><span class="toc-text">3 流控制</span></a></li></ol>
     </div>
   </section>
 
