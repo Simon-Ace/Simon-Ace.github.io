@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Linux常用命令</title>
+      <link href="/2020/11/27/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+      <url>/2020/11/27/Linux/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一、基础指令"><a href="#一、基础指令" class="headerlink" title="一、基础指令"></a>一、基础指令</h2><ul><li>xargs</li></ul><p>[Linux输出转换命令 xargs](./常用命令/Linux输出转换命令 xargs.md)</p><p><code>xargs</code>命令的作用，是将标准输入转为命令行参数。</p><p>原因：大多数命令都不接受标准输入作为参数，只能直接在命令行输入参数，这导致无法用管道命令传递参数</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">"hello world"</span> | xargs <span class="built_in">echo</span></span><br><span class="line">hello world</span><br></pre></td></tr></table></figure><h2 id="二、指令组合"><a href="#二、指令组合" class="headerlink" title="二、指令组合"></a>二、指令组合</h2><p><strong>输出中间结果</strong></p><p>使用 tee 指令，将中间结果进行输出</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find ./ -i <span class="string">"*.java"</span> | tee JavaList | grep Spring</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux, 压缩 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Shell 编程</title>
       <link href="/2020/11/19/Linux/Shell%20%E7%BC%96%E7%A8%8B/"/>
       <url>/2020/11/19/Linux/Shell%20%E7%BC%96%E7%A8%8B/</url>
@@ -206,9 +231,34 @@
     
     
     <entry>
-      <title>Linux压缩命令</title>
-      <link href="/2020/09/01/Linux/Linux%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4/"/>
-      <url>/2020/09/01/Linux/Linux%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4/</url>
+      <title>Linux输出转换命令 xargs</title>
+      <link href="/2020/09/01/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E8%BE%93%E5%87%BA%E8%BD%AC%E6%8D%A2%E5%91%BD%E4%BB%A4%20xargs/"/>
+      <url>/2020/09/01/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E8%BE%93%E5%87%BA%E8%BD%AC%E6%8D%A2%E5%91%BD%E4%BB%A4%20xargs/</url>
+      
+        <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.15版本后 tar 自动识别压缩方式</span></span><br><span class="line">tar -xvf filename.tar.gz</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="一、基本用法"><a href="#一、基本用法" class="headerlink" title="一、基本用法"></a>一、基本用法</h2><p><code>xargs</code>命令的作用，是将标准输入转为命令行参数。</p><p>原因：大多数命令都不接受标准输入作为参数，只能直接在命令行输入参数，这导致无法用管道命令传递参数</p><p>如下面 echo 不接受标准输出做参数，可用 xargs 做转换：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">"hello world"</span> | xargs <span class="built_in">echo</span></span><br><span class="line">hello world</span><br></pre></td></tr></table></figure><h2 id="二、参数"><a href="#二、参数" class="headerlink" title="二、参数"></a>二、参数</h2><h3 id="d-指定分隔符"><a href="#d-指定分隔符" class="headerlink" title="-d 指定分隔符"></a><code>-d</code> 指定分隔符</h3><p>默认情况下，<code>xargs</code>将换行符和空格作为分隔符，把标准输入分解成一个个命令行参数。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">"one two three"</span> | xargs mkdir</span><br></pre></td></tr></table></figure><p>上面代码中，<code>mkdir</code>会新建三个子目录，执行<code>mkdir one two three</code>。</p><p><code>-d</code>参数可以更改分隔符</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> -e <span class="string">"a\tb\tc"</span> | xargs -d <span class="string">"\t"</span> <span class="built_in">echo</span></span><br><span class="line">a b c</span><br></pre></td></tr></table></figure><p>上面的命令指定制表符<code>\t</code>作为分隔符，所以<code>a\tb\tc</code>就转换成了三个命令行参数。<code>echo</code>命令的<code>-e</code>参数表示解释转义字符。</p><h3 id="p-t打印将要执行的命令"><a href="#p-t打印将要执行的命令" class="headerlink" title="-p -t打印将要执行的命令"></a><code>-p -t</code>打印将要执行的命令</h3><p><code>-p</code>参数打印出要执行的命令，询问用户是否要执行。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'one two three'</span> | xargs -p touch</span><br><span class="line">touch one two three ?...</span><br></pre></td></tr></table></figure><p><code>-t</code>参数则是打印出最终要执行的命令，然后直接执行，不需要用户确认。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'one two three'</span> | xargs -t rm</span><br><span class="line">rm one two three</span><br></pre></td></tr></table></figure><h3 id="I-传递参数起别名"><a href="#I-传递参数起别名" class="headerlink" title="-I 传递参数起别名"></a><code>-I</code> 传递参数起别名</h3><p>如果<code>xargs</code>要将命令行参数传给多个命令，可以使用<code>-I</code>参数。【貌似，会按空格或回车对参数进行分割，然后重复执行命令，而不是当成命令的多个参数】</p><p><code>-I</code>指定每一项命令行参数的替代字符串。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ cat foo.txt</span><br><span class="line">one</span><br><span class="line">two</span><br><span class="line">three</span><br><span class="line"></span><br><span class="line">$ cat foo.txt | xargs -I file sh -c <span class="string">'echo file; mkdir file'</span></span><br><span class="line">one </span><br><span class="line">two</span><br><span class="line">three</span><br><span class="line"></span><br><span class="line">$ ls </span><br><span class="line">one two three</span><br></pre></td></tr></table></figure><p>上面代码中，<code>foo.txt</code>是一个三行的文本文件。我们希望对每一项命令行参数，执行两个命令（<code>echo</code>和<code>mkdir</code>），使用<code>-I file</code>表示<code>file</code>是命令行参数的替代字符串。执行命令时，具体的参数会替代掉<code>echo file; mkdir file</code>里面的两个<code>file</code>。</p><h3 id="l-L-指定多少行作为一个命令行参数"><a href="#l-L-指定多少行作为一个命令行参数" class="headerlink" title="-l -L 指定多少行作为一个命令行参数"></a><code>-l -L</code> 指定多少行作为一个命令行参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> -e <span class="string">"a\nb\nc"</span> | xargs -L 1 <span class="built_in">echo</span></span><br><span class="line">a</span><br><span class="line">b</span><br><span class="line">c</span><br></pre></td></tr></table></figure><h3 id="n-指定一行内多项作为一个命令行参数"><a href="#n-指定一行内多项作为一个命令行参数" class="headerlink" title="-n 指定一行内多项作为一个命令行参数"></a><code>-n</code> 指定一行内多项作为一个命令行参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> &#123;0..9&#125; | xargs -n 2 <span class="built_in">echo</span></span><br><span class="line">0 1</span><br><span class="line">2 3</span><br><span class="line">4 5</span><br><span class="line">6 7</span><br><span class="line">8 9</span><br></pre></td></tr></table></figure><h3 id="max-procs-多线程执行"><a href="#max-procs-多线程执行" class="headerlink" title="--max-procs 多线程执行"></a><code>--max-procs</code> 多线程执行</h3><p><code>xargs</code>默认只用一个进程执行命令。如果命令要执行多次，必须等上一次执行完，才能执行下一次。</p><p><code>--max-procs</code>参数指定同时用多少个进程并行执行命令。<code>--max-procs 2</code>表示同时最多使用两个进程，<code>--max-procs 0</code>表示不限制进程数。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -q | xargs -n 1 --max-procs 0 docker <span class="built_in">kill</span></span><br></pre></td></tr></table></figure><p>上面命令表示，同时关闭尽可能多的 Docker 容器，这样运行速度会快很多</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 技术 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux, 压缩 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Linux压缩命令 tar</title>
+      <link href="/2020/09/01/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4%20tar/"/>
+      <url>/2020/09/01/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4%20tar/</url>
       
         <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.15版本后 tar 自动识别压缩方式</span></span><br><span class="line">tar -xvf filename.tar.gz</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="一、常用压缩参数"><a href="#一、常用压缩参数" class="headerlink" title="一、常用压缩参数"></a>一、常用压缩参数</h2><p><strong>必选参数，压缩解压都要用到其中一个：</strong></p><p>-c:  建立压缩档案</p><p>-x：解压</p><p>-t：查看内容</p><p>-r：向压缩归档文件末尾追加文件</p><p>-u：更新原压缩包中的文件</p><p><strong>可选参数：</strong></p><p>-z：有gzip属性的</p><p>-j： 有bz2属性的</p><p>-Z：有compress属性的</p><p>-v：显示所有过程</p><p>-O：将文件解开到标准输出</p><p><strong>下面的参数-f是必须的</strong></p><p>-f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。</p><h2 id="二、举个栗子"><a href="#二、举个栗子" class="headerlink" title="二、举个栗子"></a>二、举个栗子</h2><p><strong>压缩</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将目录里所有jpg文件打包成tar.jpg</span></span><br><span class="line">tar -cvf jpg.tar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># 将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz</span></span><br><span class="line">tar -czf jpg.tar.gz *.jpg  </span><br><span class="line"></span><br><span class="line"><span class="comment"># rar格式的压缩，需要先下载rar for linux</span></span><br><span class="line">rar a jpg.rar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># zip格式的压缩，需要先下载zip for linux</span></span><br><span class="line">zip jpg.zip *.jpg</span><br></pre></td></tr></table></figure><p><strong>解压</strong></p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压 tar.bz2</span></span><br><span class="line">tar -xjvf file.tar.bz2  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压rar</span></span><br><span class="line">unrar e file.rar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压zip</span></span><br><span class="line">unzip file.zip</span><br></pre></td></tr></table></figure><p>从1.15版本开始tar就可以自动识别压缩的格式,故不需人为区分压缩格式就能正确解压</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf filename.tar.gz</span><br><span class="line">tar -xvf filename.tar.bz2</span><br><span class="line">tar -xvf filename.tar.xz</span><br><span class="line">tar -xvf filename.tar.Z</span><br></pre></td></tr></table></figure>]]></content>
       
@@ -357,31 +407,6 @@
     
     
     <entry>
-      <title>Mac使用代理ssh远程连接服务器 &amp; keep alive</title>
-      <link href="/2020/07/10/%E9%85%8D%E7%BD%AE/Mac%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86ssh%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%20&amp;%20keep%20alive/"/>
-      <url>/2020/07/10/%E9%85%8D%E7%BD%AE/Mac%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86ssh%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%20&amp;%20keep%20alive/</url>
-      
-        <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接连接</span></span><br><span class="line">ssh -p 端口号 服务器用户名@ip地址</span><br><span class="line"><span class="comment"># eg: ssh -p 22 userkunyu@119.29.37.63</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过代理连接</span></span><br><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 代理服务器ip:代理服务器端口 %h %p"</span> 需要访问的服务器的用户名@需要访问的服务器ip</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="1-直接连接"><a href="#1-直接连接" class="headerlink" title="1 直接连接"></a>1 直接连接</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssh -p 端口号 服务器用户名@ip地址</span></span><br><span class="line">ssh -p 22 userkunyu@119.29.37.63</span><br></pre></td></tr></table></figure><h2 id="2-通过代理连接"><a href="#2-通过代理连接" class="headerlink" title="2 通过代理连接"></a>2 通过代理连接</h2><ol><li>直接连接</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssh -o ProxyCommand="nc -X 5 -x 代理服务器ip:代理服务器端口 %h %p" 需要访问的服务器的用户名@需要访问的服务器ip</span></span><br><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 192.168.0.255:9999 %h %p"</span> user_name@192.168.77.200</span><br></pre></td></tr></table></figure><ol start="2"><li>使用SSH配置文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi ~/.ssh/config</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host *</span><br><span class="line">    ProxyCommand nc -X 5 -x 192.168.0.255:9999 %h %p</span><br></pre></td></tr></table></figure><p>配置好了之后就可以和直接连接一样使用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh uesr@ip</span><br></pre></td></tr></table></figure><blockquote><p>Mac下SSH跳点连接及代理连接_Dawnworld-CSDN博客_mac ssh 代理<br><a href="https://blog.csdn.net/thundon/article/details/46858957" target="_blank" rel="noopener">https://blog.csdn.net/thundon/article/details/46858957</a></p></blockquote><h2 id="3-Keep-alive"><a href="#3-Keep-alive" class="headerlink" title="3 Keep alive"></a>3 Keep alive</h2><blockquote><p><a href="http://bluebiu.com/blog/iterm2-ssh-session-idle.html" target="_blank" rel="noopener">http://bluebiu.com/blog/iterm2-ssh-session-idle.html</a></p></blockquote><p><strong>方案一：</strong></p><p>在本机 <code>vim ~/.ssh/config</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 在开头添加</span><br><span class="line">Host *</span><br><span class="line">    ServerAliveInterval 60</span><br></pre></td></tr></table></figure><p>我觉得60秒就好了，而且基本去连的机器都保持，所以配置了<code>*</code>，如果有需要针对某个机器，可以自行配置为需要的<code>serverHostName</code>。</p><p><strong>方案二：</strong></p><p>单次连接</p><p>添加下面的参数</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -o ServerAliveInterval=30 user@host</span><br></pre></td></tr></table></figure>]]></content>
-      
-      
-      <categories>
-          
-          <category> 教程 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 教程 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>iTerm2配置</title>
       <link href="/2020/07/10/%E9%85%8D%E7%BD%AE/iTerm2%E9%85%8D%E7%BD%AE/"/>
       <url>/2020/07/10/%E9%85%8D%E7%BD%AE/iTerm2%E9%85%8D%E7%BD%AE/</url>
@@ -407,9 +432,34 @@
     
     
     <entry>
-      <title>Linux统计文件夹下的文件数目</title>
-      <link href="/2019/10/22/Linux/Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE/"/>
-      <url>/2019/10/22/Linux/Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE/</url>
+      <title>Mac使用代理ssh远程连接服务器 &amp; keep alive</title>
+      <link href="/2020/07/10/%E9%85%8D%E7%BD%AE/Mac%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86ssh%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%20&amp;%20keep%20alive/"/>
+      <url>/2020/07/10/%E9%85%8D%E7%BD%AE/Mac%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%90%86ssh%E8%BF%9C%E7%A8%8B%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%20&amp;%20keep%20alive/</url>
+      
+        <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接连接</span></span><br><span class="line">ssh -p 端口号 服务器用户名@ip地址</span><br><span class="line"><span class="comment"># eg: ssh -p 22 userkunyu@119.29.37.63</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 通过代理连接</span></span><br><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 代理服务器ip:代理服务器端口 %h %p"</span> 需要访问的服务器的用户名@需要访问的服务器ip</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="1-直接连接"><a href="#1-直接连接" class="headerlink" title="1 直接连接"></a>1 直接连接</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssh -p 端口号 服务器用户名@ip地址</span></span><br><span class="line">ssh -p 22 userkunyu@119.29.37.63</span><br></pre></td></tr></table></figure><h2 id="2-通过代理连接"><a href="#2-通过代理连接" class="headerlink" title="2 通过代理连接"></a>2 通过代理连接</h2><ol><li>直接连接</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssh -o ProxyCommand="nc -X 5 -x 代理服务器ip:代理服务器端口 %h %p" 需要访问的服务器的用户名@需要访问的服务器ip</span></span><br><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 192.168.0.255:9999 %h %p"</span> user_name@192.168.77.200</span><br></pre></td></tr></table></figure><ol start="2"><li>使用SSH配置文件</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi ~/.ssh/config</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Host *</span><br><span class="line">    ProxyCommand nc -X 5 -x 192.168.0.255:9999 %h %p</span><br></pre></td></tr></table></figure><p>配置好了之后就可以和直接连接一样使用</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh uesr@ip</span><br></pre></td></tr></table></figure><blockquote><p>Mac下SSH跳点连接及代理连接_Dawnworld-CSDN博客_mac ssh 代理<br><a href="https://blog.csdn.net/thundon/article/details/46858957" target="_blank" rel="noopener">https://blog.csdn.net/thundon/article/details/46858957</a></p></blockquote><h2 id="3-Keep-alive"><a href="#3-Keep-alive" class="headerlink" title="3 Keep alive"></a>3 Keep alive</h2><blockquote><p><a href="http://bluebiu.com/blog/iterm2-ssh-session-idle.html" target="_blank" rel="noopener">http://bluebiu.com/blog/iterm2-ssh-session-idle.html</a></p></blockquote><p><strong>方案一：</strong></p><p>在本机 <code>vim ~/.ssh/config</code></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 在开头添加</span><br><span class="line">Host *</span><br><span class="line">    ServerAliveInterval 60</span><br></pre></td></tr></table></figure><p>我觉得60秒就好了，而且基本去连的机器都保持，所以配置了<code>*</code>，如果有需要针对某个机器，可以自行配置为需要的<code>serverHostName</code>。</p><p><strong>方案二：</strong></p><p>单次连接</p><p>添加下面的参数</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -o ServerAliveInterval=30 user@host</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 教程 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 教程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Linux统计文件数目 wc</title>
+      <link href="/2019/10/22/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE%20wc/"/>
+      <url>/2019/10/22/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E7%9A%84%E6%96%87%E4%BB%B6%E6%95%B0%E7%9B%AE%20wc/</url>
       
         <content type="html"><![CDATA[<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l | grep &quot;^-&quot; | wc -l</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="1-统计文件夹下的文件数目"><a href="#1-统计文件夹下的文件数目" class="headerlink" title="1 统计文件夹下的文件数目"></a>1 统计文件夹下的文件数目</h2><ul><li>统计当前目录下文件的个数（不包括目录）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l | grep &quot;^-&quot; | wc -l</span><br></pre></td></tr></table></figure><ul><li>统计当前目录下文件的个数（包括子目录）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -lR| grep &quot;^-&quot; | wc -l</span><br></pre></td></tr></table></figure><ul><li>查看某目录下文件夹(目录)的个数（包括子目录）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -lR | grep &quot;^d&quot; | wc -l</span><br></pre></td></tr></table></figure><p><strong>命令原理：</strong></p><ul><li><code>ls -l</code><ul><li>详细输出该文件夹下文件信息</li><li><code>ls -lR</code>是列出所有文件，包括子目录</li></ul></li><li><code>grep &quot;^-&quot;</code><ul><li>过滤<code>ls</code>的输出信息，只保留一般文件；只保留目录是<code>grep &quot;^d&quot;</code></li></ul></li><li><code>wc -l</code><ul><li>统计输出信息的行数</li></ul></li></ul>]]></content>
       
@@ -432,9 +482,9 @@
     
     
     <entry>
-      <title>Linux后台执行命令</title>
-      <link href="/2019/10/22/Linux/Linux%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/"/>
-      <url>/2019/10/22/Linux/Linux%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/</url>
+      <title>Linux后台执行命令 nohup</title>
+      <link href="/2019/10/22/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%20nohup/"/>
+      <url>/2019/10/22/Linux/%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/Linux%E5%90%8E%E5%8F%B0%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%20nohup/</url>
       
         <content type="html"><![CDATA[<p>当在终端工作时，可能一个持续运行的作业占住屏幕输出，或终端退出时导致命令结束。为了避免这些问题，可以将这些进程放到后台运行，且不受终端关闭的影响，可使用下面的方法：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup command &gt; myout.file 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure><a id="more"></a><h2 id="1-后台执行命令"><a href="#1-后台执行命令" class="headerlink" title="1 后台执行命令"></a>1 后台执行命令</h2><h3 id="1-1-命令-amp"><a href="#1-1-命令-amp" class="headerlink" title="1.1 命令&amp;"></a>1.1 命令<code>&amp;</code></h3><p>在命令后面加上<code>&amp;</code>实现后台运行（控制台关掉(退出帐户时)，作业就会<strong>停止</strong>运行）</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command &amp;</span><br></pre></td></tr></table></figure><p>例：<code>python run.py &amp;</code></p><h3 id="1-2-命令nohup"><a href="#1-2-命令nohup" class="headerlink" title="1.2 命令nohup"></a>1.2 命令<code>nohup</code></h3><p><code>nohup</code>命令可以在你退出帐户之后继续运行相应的进程。nohup就是不挂起的意思( no hang up)</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup command &amp;</span><br></pre></td></tr></table></figure><p>例：<code>nohup run.py &amp;</code></p><h2 id="2-kill进程"><a href="#2-kill进程" class="headerlink" title="2 kill进程"></a>2 kill进程</h2><p>执行后台任务命令后，会返回一个进程号，可通过这个进程号kill掉进程。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -9 进程号</span><br></pre></td></tr></table></figure><h2 id="3-输出重定向"><a href="#3-输出重定向" class="headerlink" title="3 输出重定向"></a>3 输出重定向</h2><p>由于使用前面的命令将任务放到后台运行，因此任务的输出也不打印到屏幕上了，所以需要将输出重定向到文件中，以方便查看输出内容。</p><ul><li>将输出重定向到 file（覆盖）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command1 &gt; file1</span><br></pre></td></tr></table></figure><ul><li>将输出重定向到 file（追加）</li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command1 &gt;&gt; file1</span><br></pre></td></tr></table></figure><ul><li>将 stdout 和 stderr 合并后重定向到 file<ul><li>2&gt;1代表什么，2与&gt;结合代表错误重定向，而1则代表错误重定向到一个文件1，而不代表标准输出；换成2&gt;&amp;1，&amp;与1结合就代表标准输出了，就变成错误重定向到标准输出.</li></ul></li></ul><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command1 &gt; file1 2&gt;&amp;1</span><br></pre></td></tr></table></figure><p><strong>完整写法：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup command &gt;out.file 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure><h2 id="4-其他"><a href="#4-其他" class="headerlink" title="4 其他"></a>4 其他</h2><ul><li>nohup执行python程序时，print无法输出<ul><li>这是因为python的输出有缓冲，导致nohup.out并不能够马上看到输出</li><li>python 有个-u参数，使得python不启用缓冲</li><li><code>nohup python -u test.py &gt; nohup.out 2&gt;&amp;1 &amp;</code></li></ul></li></ul>]]></content>
       
