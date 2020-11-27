@@ -1,7 +1,7 @@
 ---
 type: blog
 title: Linux输出转换命令 xargs
-date: 2020-09-01
+date: 2020-11-27
 categories: 技术
 tags: Linux, 压缩
 cover: false
@@ -12,14 +12,7 @@ meta:
 
 
 ```bash
-# 解压 tar包
-tar -xvf file.tar 
-
-# 解压tar.gz
-tar -xzvf file.tar.gz 
-
-# 1.15版本后 tar 自动识别压缩方式
-tar -xvf filename.tar.gz
+$ echo "hello world" | xargs echo
 ```
 
 
