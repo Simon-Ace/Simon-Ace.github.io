@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>Hello World | Rookie的博客</title>
+  <title>Linux文本文件处理程序 awk | Rookie的博客</title>
   
   
 
@@ -43,71 +43,7 @@
 <body>
   
   
-  <div class="cover-wrapper">
-    <cover class='cover post half'>
-      
-        
-  <h1 class='title'>Rookie的博客</h1>
-
-
-  <div class="m_search">
-    <form name="searchform" class="form u-search-form">
-      <input type="text" class="input u-search-input" placeholder="" />
-      <i class="icon fas fa-search fa-fw"></i>
-    </form>
-  </div>
-
-<div class='menu navgation'>
-  <ul class='h-list'>
-    
-      
-        <li>
-          <a class="nav home" href="/"
-            
-            
-            id="home">
-            <i class='fas fa-rss fa-fw'></i>&nbsp;博文
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/projects/"
-            
-            
-            id="projects">
-            <i class='fas fa-code-branch fa-fw'></i>&nbsp;项目
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/friends/"
-            
-              rel="nofollow"
-            
-            
-            id="friends">
-            <i class='fas fa-link fa-fw'></i>&nbsp;友链
-          </a>
-        </li>
-      
-        <li>
-          <a class="nav home" href="/about/"
-            
-              rel="nofollow"
-            
-            
-            id="about">
-            <i class='fas fa-info-circle fa-fw'></i>&nbsp;关于
-          </a>
-        </li>
-      
-    
-  </ul>
-</div>
-
-      
-    </cover>
-    <header class="l_header pure">
+  <header class="l_header pure">
   <div id="loading-bar-wrapper">
     <div id="loading-bar" class="pure"></div>
   </div>
@@ -271,10 +207,9 @@
 	</aside>
 <script>setLoadingBarProgress(40);</script>
 
-  </div>
 
 
-  <div class="l_body">
+  <div class="l_body nocover">
     <div class='body-wrapper'>
       <div class='l_main'>
   
@@ -291,8 +226,8 @@
         
   
     <h1 class="title">
-      <a href="/2020/07/10/hello-world/">
-        Hello World
+      <a href="/2020/11/27/Linux/常用命令/Linux文本文件处理程序 awk/">
+        Linux文本文件处理程序 awk
       </a>
     </h1>
   
@@ -323,7 +258,7 @@
             <div class="new-meta-item date">
   <a class='notlink'>
     <i class="fas fa-calendar-alt" aria-hidden="true"></i>
-    <p>2020-07-10</p>
+    <p>2020-11-27</p>
   </a>
 </div>
 
@@ -331,6 +266,14 @@
         
           
             
+  
+  <div class='new-meta-item category'>
+    <a href='/categories/技术/' rel="nofollow">
+      <i class="fas fa-folder-open" aria-hidden="true"></i>
+      <p>技术</p>
+    </a>
+  </div>
+
 
           
         
@@ -367,19 +310,84 @@
 
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<h2 id="一、基础用法"><a href="#一、基础用法" class="headerlink" title="一、基础用法"></a>一、基础用法</h2><p><code>awk</code>是处理文本文件的一个应用程序，几乎所有 Linux 系统都自带这个程序。</p>
+<p>它依次处理文件的每一行，并读取里面的每一个字段。对于日志、CSV 那样的每行格式相同的文本文件，<code>awk</code>可能是最方便的工具。</p>
+<p><code>awk</code>的基本用法就是下面的形式。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式</span></span><br><span class="line">$ awk 动作 文件名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 示例</span></span><br><span class="line">$ awk <span class="string">'&#123;print $0&#125;'</span> demo.txt</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>上面示例中，<code>demo.txt</code>是<code>awk</code>所要处理的文本文件。前面单引号内部有一个大括号，里面就是每一行的处理动作<code>print $0</code>。其中，<code>print</code>是打印命令，<code>$0</code>代表当前行。因此上面命令是把每一行原样打印出来。</p>
+<p><code>awk</code>会根据空格和制表符，将每一行分成若干字段，依次用<code>$1</code>、<code>$2</code>、<code>$3</code>代表第一个字段、第二个字段、第三个字段等等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">echo</span> <span class="string">'this is a test'</span> | awk <span class="string">'&#123;print $3&#125;'</span></span><br><span class="line">a</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<p>下面，为了便于举例，我们把<code>/etc/passwd</code>文件保存成<code>demo.txt</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root:x:0:0:root:/root:/usr/bin/zsh</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">bin:x:2:2:bin:/bin:/usr/sbin/nologin</span><br><span class="line">sys:x:3:3:sys:/dev:/usr/sbin/nologin</span><br><span class="line">sync:x:4:65534:sync:/bin:/bin/sync</span><br></pre></td></tr></table></figure>
+
+<p>这个文件的字段分隔符是冒号（<code>:</code>），所以要用<code>-F</code>参数指定分隔符为冒号</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'&#123; print $1 &#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">daemon</span><br><span class="line">bin</span><br><span class="line">sys</span><br><span class="line">sync</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、变量"><a href="#二、变量" class="headerlink" title="二、变量"></a>二、变量</h2><ul>
+<li><code>数字</code>：第几个字段（从1开始）</li>
+<li><code>NF</code>：当前行有多少个字段，因此<code>$NF</code>就代表最后一个字段</li>
+<li><code>NR</code>：表示当前处理的是第几行。</li>
+<li><code>FILENAME</code>：当前文件名</li>
+<li><code>FS</code>：字段分隔符，默认是空格和制表符。</li>
+<li><code>RS</code>：行分隔符，用于分割每一行，默认是换行符。</li>
+<li><code>OFS</code>：输出字段的分隔符，用于打印时分隔字段，默认为空格。</li>
+<li><code>ORS</code>：输出记录的分隔符，用于打印时分隔记录，默认为换行符。</li>
+<li><code>OFMT</code>：数字输出的格式，默认为<code>％.6g</code>。</li>
+</ul>
+<p>变量<code>NF</code>表示当前行有多少个字段，因此<code>$NF</code>就代表最后一个字段；<code>$(NF-1)</code>代表倒数第二个字段。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; $ <span class="built_in">echo</span> <span class="string">'this is a test'</span> | awk <span class="string">'&#123;print $NF, $(NF-1)&#125;'</span>   <span class="comment"># print中的逗号是以空格分隔的意思</span></span><br><span class="line">&gt; <span class="built_in">test</span> a</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>变量<code>NR</code>表示当前处理的是第几行。</p>
+<blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; $ awk -F <span class="string">':'</span> <span class="string">'&#123;print NR ") " $1&#125;'</span> demo.txt</span><br><span class="line">&gt; 1) root</span><br><span class="line">&gt; 2) daemon</span><br><span class="line">&gt; 3) bin</span><br><span class="line">&gt; 4) sys</span><br><span class="line">&gt; 5) sync</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>上面代码中，<code>print</code>命令里面，如果原样输出字符，要放在双引号里面</p>
+<h2 id="三、函数"><a href="#三、函数" class="headerlink" title="三、函数"></a>三、函数</h2><p>常用函数如下</p>
+<ul>
+<li><code>toupper()</code>：字符转为大写</li>
+<li><code>tolower()</code>：字符转为小写</li>
+<li><code>length()</code>：返回字符串长度</li>
+<li><code>substr()</code>：返回子字符串</li>
+<li><code>sin()</code>：正弦</li>
+<li><code>cos()</code>：余弦</li>
+<li><code>sqrt()</code>：平方根</li>
+<li><code>rand()</code>：随机数</li>
+</ul>
+<p><code>awk</code>内置函数的完整列表，可以查看<a href="https://www.gnu.org/software/gawk/manual/html_node/Built_002din.html#Built_002din" target="_blank" rel="noopener">手册</a>。</p>
+<p>例：<code>toupper</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'&#123; print toupper($1) &#125;'</span> demo.txt</span><br><span class="line">ROOT</span><br><span class="line">DAEMON</span><br><span class="line">BIN</span><br><span class="line">SYS</span><br><span class="line">SYNC</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、条件"><a href="#四、条件" class="headerlink" title="四、条件"></a>四、条件</h2><p><code>awk</code>允许指定输出条件，只输出符合条件的行。</p>
+<p>输出条件要写在动作的前面。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ awk <span class="string">'条件 动作'</span> 文件名</span><br></pre></td></tr></table></figure>
+
+<p>请看下面的例子。<code>print</code>命令前面是一个正则表达式，只输出包含<code>usr</code>的行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'/usr/ &#123;print $1&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">daemon</span><br><span class="line">bin</span><br><span class="line">sys</span><br></pre></td></tr></table></figure>
+
+<p>下面的例子只输出奇数行，以及输出第三行以后的行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 输出奇数行</span></span><br><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'NR % 2 == 1 &#123;print $1&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">bin</span><br><span class="line">sync</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出第三行以后的行</span></span><br><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'NR &gt;3 &#123;print $1&#125;'</span> demo.txt</span><br><span class="line">sys</span><br><span class="line">sync</span><br></pre></td></tr></table></figure>
+
+<p>下面的例子输出第一个字段等于指定值的行。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'$1 == "root" &#123;print $1&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line"></span><br><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'$1 == "root" || $1 == "bin" &#123;print $1&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">bin</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、if-语句"><a href="#五、if-语句" class="headerlink" title="五、if 语句"></a>五、if 语句</h2><p><code>awk</code>提供了<code>if</code>结构，用于编写复杂的条件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'&#123;if ($1 &gt; "m") print $1&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">sys</span><br><span class="line">sync</span><br></pre></td></tr></table></figure>
+
+<p>上面代码输出第一个字段的第一个字符大于<code>m</code>的行。</p>
+<p><code>if</code>结构还可以指定<code>else</code>部分。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ awk -F <span class="string">':'</span> <span class="string">'&#123;if ($1 &gt; "m") print $1; else print "---"&#125;'</span> demo.txt</span><br><span class="line">root</span><br><span class="line">---</span><br><span class="line">---</span><br><span class="line">sys</span><br><span class="line">sync</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、相关连接"><a href="#六、相关连接" class="headerlink" title="六、相关连接"></a>六、相关连接</h2><ul>
+<li><a href="https://gregable.com/2010/09/why-you-should-know-just-little-awk.html" target="_blank" rel="noopener">An Awk tutorial by Example</a>, Greg Grothaus</li>
+<li><a href="https://likegeeks.com/awk-command/" target="_blank" rel="noopener">30 Examples for Awk Command in Text Processing</a>, Mokhtar Ebrahim</li>
+</ul>
 
       </div>
       
@@ -391,10 +399,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-07-10T11:23:10+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-11-27T17:54:44+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年7月10日</p>
+    <p>更新于 2020年11月27日</p>
   </a>
 </div>
 
@@ -402,6 +410,9 @@
       
         
           
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Linux/" rel="nofollow"><i class="fas fa-tag" aria-hidden="true"></i><p>Linux</p></a></div>
+
 
         
       
@@ -413,7 +424,7 @@
       
         <a class="-mob-share-qq" title="QQ好友" rel="external nofollow noopener noreferrer"
           
-          href="http://connect.qq.com/widget/shareqq/index.html?url=https://simon-ace.github.io/2020/07/10/hello-world/&title=Hello World | Rookie的博客&summary="
+          href="http://connect.qq.com/widget/shareqq/index.html?url=https://simon-ace.github.io/2020/11/27/Linux/常用命令/Linux文本文件处理程序 awk/&title=Linux文本文件处理程序 awk | Rookie的博客&summary=12"
           
           >
           
@@ -425,7 +436,7 @@
       
         <a class="-mob-share-qzone" title="QQ空间" rel="external nofollow noopener noreferrer"
           
-          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://simon-ace.github.io/2020/07/10/hello-world/&title=Hello World | Rookie的博客&summary="
+          href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://simon-ace.github.io/2020/11/27/Linux/常用命令/Linux文本文件处理程序 awk/&title=Linux文本文件处理程序 awk | Rookie的博客&summary=12"
           
           >
           
@@ -437,7 +448,7 @@
       
         <a class="-mob-share-weibo" title="微博" rel="external nofollow noopener noreferrer"
           
-          href="http://service.weibo.com/share/share.php?url=https://simon-ace.github.io/2020/07/10/hello-world/&title=Hello World | Rookie的博客&summary="
+          href="http://service.weibo.com/share/share.php?url=https://simon-ace.github.io/2020/11/27/Linux/常用命令/Linux文本文件处理程序 awk/&title=Linux文本文件处理程序 awk | Rookie的博客&summary=12"
           
           >
           
@@ -465,12 +476,17 @@
                       <span class="art-item-left">
                           <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
                           <h4>
-                              <a href="/2020/08/12/Docker部署Vue项目/" rel="prev" title="">
+                              <a href="/2020/11/27/Linux/Linux常用命令/" rel="prev" title="Linux常用命令">
                                 
-                                    2020-08-12
+                                    Linux常用命令
                                 
                               </a>
                           </h4>
+                          
+                              
+                              <h6 class="tags">
+                                  <a class="tag" href="/tags/Linux-压缩/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Linux, 压缩</a>
+                              </h6>
                           
                       </span>
                   </section>
@@ -480,16 +496,16 @@
                       <span class="art-item-right" aria-hidden="true">
                           <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
                           <h4>
-                              <a href="/2020/07/10/Mac安装node/" rel="prev" title="Mac安装node">
+                              <a href="/2020/11/27/Linux/常用命令/Linux输出转换命令 xargs/" rel="prev" title="Linux输出转换命令 xargs">
                                   
-                                      Mac安装node
+                                      Linux输出转换命令 xargs
                                   
                               </a>
                           </h4>
                           
                               
                               <h6 class="tags">
-                                  <a class="tag" href="/tags/教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> 教程</a>
+                                  <a class="tag" href="/tags/Linux-压缩/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Linux, 压缩</a>
                               </h6>
                           
                       </span>
@@ -519,7 +535,7 @@
 
   <script>
     window.subData = {
-      title: 'Hello World',
+      title: 'Linux文本文件处理程序 awk',
       tools: true
     }
   </script>
@@ -550,7 +566,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick-Start"><span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create-a-new-post"><span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run-server"><span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate-static-files"><span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy-to-remote-sites"><span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基础用法"><span class="toc-text">一、基础用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、变量"><span class="toc-text">二、变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、函数"><span class="toc-text">三、函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、条件"><span class="toc-text">四、条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、if-语句"><span class="toc-text">五、if 语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、相关连接"><span class="toc-text">六、相关连接</span></a></li></ol>
     </div>
   </section>
 
