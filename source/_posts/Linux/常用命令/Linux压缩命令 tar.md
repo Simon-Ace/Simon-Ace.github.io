@@ -1,6 +1,6 @@
 ---
 type: blog
-title: Linux压缩命令
+title: Linux压缩命令 tar
 date: 2020-09-01
 categories: 技术
 tags: Linux, 压缩

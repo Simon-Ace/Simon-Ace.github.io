@@ -1,6 +1,6 @@
 ---
 type: blog
-title: Linux后台执行命令
+title: Linux后台执行命令 nohup
 date: 2019-10-22
 categories: Linux
 tags: Linux

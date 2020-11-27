@@ -1,6 +1,6 @@
 ---
 type: blog
-title: Linux统计文件夹下的文件数目
+title: Linux统计文件数目 wc
 date: 2019-10-22
 categories: Linux
 tags: Linux
