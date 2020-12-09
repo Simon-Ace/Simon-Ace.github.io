@@ -630,7 +630,7 @@ $ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcoun
 
 - 查看
   - 打开 yarn web http://hadoop103:8088/
-  - 打开 history，在点 log 就能看到任务具体的日志信息了
+  - 打开 history，再点 log 就能看到任务具体的日志信息了
   - ![image-20201008173041985](../../../../../Library/Application Support/typora-user-images/image-20201008173041985.png)
 
 #### 3.3.5 集群时间同步
@@ -1569,6 +1569,13 @@ $ bin/stop-hbase.sh
 # regionservers
 $ bin/hbase-daemons.sh start regionserver
 $ bin/hbase-daemons.sh stop regionserver
+```
+
+- 进入 shell
+
+```bash
+# 如果有 kerberos 认证，需要先 kinit 一下
+$ bin/hbase shell
 ```
 
 ### 8.2 常用操作
