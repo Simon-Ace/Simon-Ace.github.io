@@ -566,7 +566,7 @@
 <ul>
 <li>查看<ul>
 <li>打开 yarn web <a href="http://hadoop103:8088/" target="_blank" rel="noopener">http://hadoop103:8088/</a></li>
-<li>打开 history，在点 log 就能看到任务具体的日志信息了</li>
+<li>打开 history，再点 log 就能看到任务具体的日志信息了</li>
 <li>![image-20201008173041985](../../../../../Library/Application Support/typora-user-images/image-20201008173041985.png)</li>
 </ul>
 </li>
@@ -1061,6 +1061,11 @@
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动 HDFS、Zookeeper</span></span><br><span class="line">$ start-dfs.sh</span><br><span class="line">$ <span class="variable">$&#123;Zookeeper_BASE&#125;</span>/bin/zkServer.sh start  <span class="comment"># 每个机器都要单独启动</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 conf/regionservers，添加所有 regionserver 的 host</span></span><br><span class="line">hadoop102</span><br><span class="line">hadoop103</span><br><span class="line">hadoop104</span><br><span class="line"></span><br><span class="line"><span class="comment"># 群起 / 群停</span></span><br><span class="line">$ bin/start-hbase.sh</span><br><span class="line">$ bin/stop-hbase.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># regionservers</span></span><br><span class="line">$ bin/hbase-daemons.sh start regionserver</span><br><span class="line">$ bin/hbase-daemons.sh stop regionserver</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>进入 shell</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果有 kerberos 认证，需要先 kinit 一下</span></span><br><span class="line">$ bin/hbase shell</span><br></pre></td></tr></table></figure>
+
 <h3 id="8-2-常用操作"><a href="#8-2-常用操作" class="headerlink" title="8.2 常用操作"></a>8.2 常用操作</h3><p>使用 <code>help</code> 查看各种命令使用方式</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出所有指令</span></span><br><span class="line">&gt; <span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看某一组命令的帮助</span></span><br><span class="line">&gt; <span class="built_in">help</span> <span class="string">'COMMAND_GROUP'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看单个命令帮助</span></span><br><span class="line">&gt; <span class="built_in">help</span> <span class="string">'COMMAND'</span></span><br></pre></td></tr></table></figure>
 
@@ -1168,10 +1173,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-11-11T19:51:39+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-12-09T11:33:57+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年11月11日</p>
+    <p>更新于 2020年12月9日</p>
   </a>
 </div>
 
