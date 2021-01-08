@@ -74,6 +74,8 @@ rar a jpg.rar *.jpg
 
 # zip格式的压缩，需要先下载zip for linux
 zip jpg.zip *.jpg
+# zip 文件夹
+zip -r folder.zip folder
 ```
 
 **解压**

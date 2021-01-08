@@ -177,3 +177,19 @@ sed "s/This is my \([^,]*\),.*is \(.*\)/\1:\2/g" my.txt
 匹配为：This is my (cat),……….is (betty)
 
 然后：\1就是cat，\2就是betty
+
+
+
+---
+
+### 相关链接
+
+https://www.cnblogs.com/ggjucheng/archive/2013/01/13/2856901.html
+
+https://man.linuxde.net/sed
+
+https://coolshell.cn/articles/9104.html
+
+https://zhuanlan.zhihu.com/p/145661854
+
+https://www.cnblogs.com/along21/p/10366886.html
