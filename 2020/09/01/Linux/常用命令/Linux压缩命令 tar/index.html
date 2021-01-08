@@ -329,7 +329,7 @@
 <p><strong>下面的参数-f是必须的</strong></p>
 <p>-f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。</p>
 <h2 id="二、举个栗子"><a href="#二、举个栗子" class="headerlink" title="二、举个栗子"></a>二、举个栗子</h2><p><strong>压缩</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将目录里所有jpg文件打包成tar.jpg</span></span><br><span class="line">tar -cvf jpg.tar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># 将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz</span></span><br><span class="line">tar -czf jpg.tar.gz *.jpg  </span><br><span class="line"></span><br><span class="line"><span class="comment"># rar格式的压缩，需要先下载rar for linux</span></span><br><span class="line">rar a jpg.rar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># zip格式的压缩，需要先下载zip for linux</span></span><br><span class="line">zip jpg.zip *.jpg</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将目录里所有jpg文件打包成tar.jpg</span></span><br><span class="line">tar -cvf jpg.tar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># 将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz</span></span><br><span class="line">tar -czf jpg.tar.gz *.jpg  </span><br><span class="line"></span><br><span class="line"><span class="comment"># rar格式的压缩，需要先下载rar for linux</span></span><br><span class="line">rar a jpg.rar *.jpg </span><br><span class="line"></span><br><span class="line"><span class="comment"># zip格式的压缩，需要先下载zip for linux</span></span><br><span class="line">zip jpg.zip *.jpg</span><br><span class="line"><span class="comment"># zip 文件夹</span></span><br><span class="line">zip -r folder.zip folder</span><br></pre></td></tr></table></figure>
 
 <p><strong>解压</strong></p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压 tar.bz2</span></span><br><span class="line">tar -xjvf file.tar.bz2  </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压rar</span></span><br><span class="line">unrar e file.rar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压zip</span></span><br><span class="line">unzip file.zip</span><br></pre></td></tr></table></figure>
@@ -348,10 +348,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-11-27T14:49:21+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-01-04T15:26:11+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2020年11月27日</p>
+    <p>更新于 2021年1月4日</p>
   </a>
 </div>
 
@@ -688,7 +688,7 @@
         
           <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(7)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(16)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(17)</div></a></li>
         
       </ul>
     </div>
@@ -742,7 +742,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
