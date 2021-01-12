@@ -12,14 +12,12 @@ meta:
 
 
 ```bash
-# 解压 tar包
-tar -xvf file.tar 
+# 压缩
+tar -czvf xxx.tar.gz /etc/folder
 
-# 解压tar.gz
-tar -xzvf file.tar.gz 
-
-# 1.15版本后 tar 自动识别压缩方式
+# 解压（1.15版本后 tar 自动识别压缩方式）
 tar -xvf filename.tar.gz
+tar -xvf filename.tar.gz -C /home/xxx
 ```
 
 
@@ -52,6 +50,8 @@ tar -xvf filename.tar.gz
 
 -O：将文件解开到标准输出
 
+-C：解压时指定文件夹
+
 **下面的参数-f是必须的**
 
 -f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。
@@ -67,12 +67,14 @@ tar -xvf filename.tar.gz
 tar -cvf jpg.tar *.jpg 
 
 # 将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
-tar -czf jpg.tar.gz *.jpg  
+tar -czvf jpg.tar.gz *.jpg
+# 打包文件夹
+tar -czvf xxx.tar.gz /etc/folder
 
-# rar格式的压缩，需要先下载rar for linux
+# rar格式的压缩，需要先下载 rar for linux
 rar a jpg.rar *.jpg 
 
-# zip格式的压缩，需要先下载zip for linux
+# zip格式的压缩，需要先下载 zip for linux
 zip jpg.zip *.jpg
 # zip 文件夹
 zip -r folder.zip folder
@@ -83,6 +85,8 @@ zip -r folder.zip folder
 ```bash
 # 解压 tar包
 tar -xvf file.tar 
+# 指定文件夹
+tar -xvf file.tar -C /home/xxx
 
 # 解压tar.gz
 tar -xzvf file.tar.gz 
