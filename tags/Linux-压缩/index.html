@@ -575,7 +575,7 @@
 
   <section class="article typo">
     <div class="article-entry" itemprop="articleBody">
-      <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 解压 tar包</span></span><br><span class="line">tar -xvf file.tar </span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压tar.gz</span></span><br><span class="line">tar -xzvf file.tar.gz </span><br><span class="line"></span><br><span class="line"><span class="comment"># 1.15版本后 tar 自动识别压缩方式</span></span><br><span class="line">tar -xvf filename.tar.gz</span><br></pre></td></tr></table></figure>
+      <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 压缩</span></span><br><span class="line">tar -czvf xxx.tar.gz /etc/folder</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解压（1.15版本后 tar 自动识别压缩方式）</span></span><br><span class="line">tar -xvf filename.tar.gz</span><br><span class="line">tar -xvf filename.tar.gz -C /home/xxx</span><br></pre></td></tr></table></figure>
       
         <div class="readmore">
           <a href="/2020/09/01/Linux/常用命令/Linux压缩命令 tar/" class="flat-box">
