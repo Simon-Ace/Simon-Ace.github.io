@@ -879,6 +879,39 @@ Using config: /opt/module/zookeeper-3.4.10/bin/../conf/zoo.cfg
 Mode: leader / follower
 ```
 
+**3、集群脚本**
+
+```bash
+#!/bin/bash
+
+case $1 in
+"start"){
+        for i in hadoop102 hadoop103 hadoop104
+        do
+                echo "==== start $i zookeeper ===="
+                ssh $i "/opt/module/zookeeper-3.4.10/bin/zkServer.sh start"
+        done
+};;
+
+"stop"){
+        for i in hadoop102 hadoop103 hadoop104
+        do
+                echo "==== stop $i zookeeper ===="
+                ssh $i "/opt/module/zookeeper-3.4.10/bin/zkServer.sh stop"
+        done
+};;
+
+"status"){
+        for i in hadoop102 hadoop103 hadoop104
+        do
+                echo "==== status $i zookeeper ===="
+                ssh $i "/opt/module/zookeeper-3.4.10/bin/zkServer.sh status"
+        done
+};;
+
+esac
+```
+
 ### 4.3 客户端操作
 
 - 启动
