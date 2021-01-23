@@ -1,6 +1,6 @@
 ---
 type: blog
-title: raw.githubusercontent.com无法链接
+title: raw.githubusercontent.com无法连接
 date: 2021-01-24
 categories: 教程
 tags: 教程
