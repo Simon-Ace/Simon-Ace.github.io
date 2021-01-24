@@ -310,7 +310,148 @@
 
     <section class="article typo">
       <div class="article-entry" itemprop="articleBody">
-        <h1 id="电商数仓-V2-0-（03-电商数据仓库系统）"><a href="#电商数仓-V2-0-（03-电商数据仓库系统）" class="headerlink" title="电商数仓 V2.0 （03 电商数据仓库系统）"></a>电商数仓 V2.0 （03 电商数据仓库系统）</h1><h2 id="一、数仓分层"><a href="#一、数仓分层" class="headerlink" title="一、数仓分层"></a>一、数仓分层</h2>
+        <h1 id="电商数仓-V2-0-（03-电商数据仓库系统）"><a href="#电商数仓-V2-0-（03-电商数据仓库系统）" class="headerlink" title="电商数仓 V2.0 （03 电商数据仓库系统）"></a>电商数仓 V2.0 （03 电商数据仓库系统）</h1><h2 id="一、数仓分层"><a href="#一、数仓分层" class="headerlink" title="一、数仓分层"></a>一、数仓分层</h2><h3 id="1-1-为什么要分层"><a href="#1-1-为什么要分层" class="headerlink" title="1.1 为什么要分层"></a>1.1 为什么要分层</h3><ul>
+<li>把复杂问题简单化<ul>
+<li>将复杂的任务分解成多层来完成，每一层只处理简单的任务，方便定位问题</li>
+</ul>
+</li>
+<li>减少重复开发<ul>
+<li>规范数据分层，通过的中间层数据，能够减少极大的重复计算，增加一次计算结果的复用性</li>
+</ul>
+</li>
+<li>隔离原始数据<ul>
+<li>不论是数据的异常还是数据的敏感性，使真实数据与统计数据解耦开</li>
+</ul>
+</li>
+</ul>
+<p><strong>常见分层方式：</strong></p>
+<p><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124094731145.png" alt="image-20210124094731145"></p>
+<h3 id="1-2-数据集市与数据仓库"><a href="#1-2-数据集市与数据仓库" class="headerlink" title="1.2 数据集市与数据仓库"></a>1.2 数据集市与数据仓库</h3><p><strong>数据仓库：</strong>企业级别的，包含企业内所有的数据</p>
+<p><strong>数据集市：</strong>可以理解为部门级别的，归属于数据仓库</p>
+<h2 id="二、数仓理论简介"><a href="#二、数仓理论简介" class="headerlink" title="二、数仓理论简介"></a>二、数仓理论简介</h2><h3 id="2-1-范式理论"><a href="#2-1-范式理论" class="headerlink" title="2.1 范式理论"></a>2.1 范式理论</h3><p><strong>定义</strong></p>
+<p>范式可以理解为设计一张数据表的表结构，符合的标准级别，规范和要求</p>
+<p><strong>优点</strong></p>
+<ul>
+<li>减少数据冗余</li>
+<li>保持数据一致性（只改其中一张表就可以了）</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>难以应对大数据量的计算，因为会频繁涉及表之间的 join 操作</li>
+</ul>
+<h3 id="2-2-关系建模和维度建模"><a href="#2-2-关系建模和维度建模" class="headerlink" title="2.2 关系建模和维度建模"></a>2.2 关系建模和维度建模</h3><p><strong>数据处理主要分类：</strong></p>
+<ul>
+<li>联机事务处理 OLTP（on-line transaction processing）<ul>
+<li>基于事务型的数据增删改查，如银行交易</li>
+</ul>
+</li>
+<li>联机分析处理 OLAP（On-Line Analytical Processing）<ul>
+<li>基于分析型的数据处理，如计算pv uv</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>对比属性</th>
+<th>OLTP（如 MySQL）</th>
+<th>OLAP（如 Hive）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>读特性</td>
+<td>每次查询只返回少量记录</td>
+<td>对大量记录进行汇总</td>
+</tr>
+<tr>
+<td>写特性</td>
+<td>随机、低延时写入用户的输入</td>
+<td>批量导入</td>
+</tr>
+<tr>
+<td>使用场景</td>
+<td>用户，Java EE项目</td>
+<td>内部分析师，为决策提供支持</td>
+</tr>
+<tr>
+<td>数据表征</td>
+<td>最新数据状态</td>
+<td>随时间变化的历史状态</td>
+</tr>
+<tr>
+<td>数据规模</td>
+<td>GB</td>
+<td>TB到PB</td>
+</tr>
+</tbody></table>
+<h4 id="2-2-1-关系建模"><a href="#2-2-1-关系建模" class="headerlink" title="2.2.1 关系建模"></a>2.2.1 关系建模</h4><ul>
+<li>基本严格遵循三范式</li>
+<li>表较为零碎</li>
+<li>数据冗余低</li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124113305858.png" alt="image-20210124113305858" style="zoom:67%;">
+
+<h4 id="2-2-2-维度建模"><a href="#2-2-2-维度建模" class="headerlink" title="2.2.2 维度建模"></a>2.2.2 维度建模</h4><ul>
+<li>主要应用于OLAP系统中</li>
+<li>通常以某一个事实表为中心进行表的组织，主要面向业务</li>
+<li>存在数据的冗余，但是能方便的得到数据。</li>
+<li>在大规模数据，跨表分析统计查询过程中，不需要多表关联，提升效率</li>
+<li>把相关各种表整理成两种：事实表和维度表</li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124113451765.png" alt="image-20210124113451765" style="zoom:50%;">
+
+<p><strong>分类</strong></p>
+<ul>
+<li>星型模型<ul>
+<li>在一个事实表周围只会围绕一圈维度表</li>
+<li>冗余可能会多一点，但是减少了 join 能提升计算效率</li>
+<li><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124114249379.png" alt="image-20210124114249379" style="zoom:33%;"></li>
+</ul>
+</li>
+<li>雪花模型<ul>
+<li>相对于星型模型，事实表周围会有多层维度表</li>
+<li>会更灵活一些</li>
+<li><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124114305334.png" alt="image-20210124114305334" style="zoom:33%;"></li>
+</ul>
+</li>
+<li>星座模型<ul>
+<li>在前两种上的扩展，如果多于一个事实表，就是星座模型</li>
+<li><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210124114351218.png" alt="image-20210124114351218" style="zoom:33%;">
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-3-维度表和事实表"><a href="#2-3-维度表和事实表" class="headerlink" title="2.3 维度表和事实表"></a>2.3 维度表和事实表</h3><h4 id="2-3-1-维度表"><a href="#2-3-1-维度表" class="headerlink" title="2.3.1 维度表"></a>2.3.1 维度表</h4><p><strong>定义：</strong></p>
+<p>一般是对事实的<strong><em>描述信息</em></strong>。每一张维表对应现实世界中的一个对象或者概念。   例如：用户、商品、日期、地区等</p>
+<p><strong>特征：</strong></p>
+<ul>
+<li><p>维表的范围很宽（具有多个属性、列比较多）</p>
+</li>
+<li><p>跟事实表相比，行数相对较小：通常&lt; 10万条</p>
+</li>
+<li><p>内容相对固定：编码表</p>
+</li>
+</ul>
+<h4 id="2-3-2-事实表"><a href="#2-3-2-事实表" class="headerlink" title="2.3.2 事实表"></a>2.3.2 事实表</h4><p><strong>定义：</strong></p>
+<p>描述一个业务过程，如下单、支付、退款、评价等。通常包含着可统计的列，如金额、数量等。</p>
+<p><strong>特征：</strong></p>
+<ul>
+<li><p>非常的大</p>
+</li>
+<li><p>内容相对的窄：列数较少</p>
+</li>
+<li><p>经常发生变化，每天会新增加很多</p>
+</li>
+</ul>
+<p><strong>事实表分类：</strong></p>
+<p><strong>1）事务型事实表</strong></p>
+<p>以<em>每个事务或事件为单位</em>，例如一个销售订单记录，一笔支付记录等，作为事实表里的一行数据。一旦事务被提交，事实表数据被插入，数据就不再进行更改，其更新方式为增量更新。  </p>
+<p><strong>2）周期型快照事实表</strong></p>
+<p>周期型快照事实表中<em>不会保留所有数据，只保留固定时间间隔的数据</em>，例如每天或者每月的销售额。对中间过程不敏感，只关心到一个时间点时的状态。</p>
+<p><strong>3）累积型快照事实表</strong></p>
+<p><em>累计快照事实表用于跟踪业务事实的变化。</em>例如，数据仓库中可能需要累积或者存储订单从下订单开始，到订单商品被打包、运输、和签收的各个业务阶段的时间点数据来跟踪订单声明周期的进展情况。当这个业务过程进行时，事实表的记录也要不断更新。</p>
+
       </div>
       
         <br>
@@ -321,7 +462,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-01-24T00:43:19+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-01-24T11:54:14+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2021年1月24日</p>
@@ -488,7 +629,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（03-电商数据仓库系统）"><span class="toc-text">电商数仓 V2.0 （03 电商数据仓库系统）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、数仓分层"><span class="toc-text">一、数仓分层</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（03-电商数据仓库系统）"><span class="toc-text">电商数仓 V2.0 （03 电商数据仓库系统）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、数仓分层"><span class="toc-text">一、数仓分层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-为什么要分层"><span class="toc-text">1.1 为什么要分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-数据集市与数据仓库"><span class="toc-text">1.2 数据集市与数据仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、数仓理论简介"><span class="toc-text">二、数仓理论简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-范式理论"><span class="toc-text">2.1 范式理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-关系建模和维度建模"><span class="toc-text">2.2 关系建模和维度建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-关系建模"><span class="toc-text">2.2.1 关系建模</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-维度建模"><span class="toc-text">2.2.2 维度建模</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-维度表和事实表"><span class="toc-text">2.3 维度表和事实表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-维度表"><span class="toc-text">2.3.1 维度表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-事实表"><span class="toc-text">2.3.2 事实表</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
   </section>
 
