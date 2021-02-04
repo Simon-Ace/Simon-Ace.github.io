@@ -1470,6 +1470,38 @@ $ cp mysql-connector-java-5.1.27-bin.jar /opt/module/hive-2.3.0-bin/lib/
 </configuration>
 ```
 
+用于启动 hive-metastore 的配置
+
+```xml
+    <property>
+         <name>hive.metastore.warehouse.dir</name>
+         <value>/user/hive/warehouse</value>
+         <description>location of default database for the warehouse</description>
+    </property>
+		<!-- 可以显示表头列名 -->
+    <property>
+        <name>hive.cli.print.header</name>
+        <value>true</value>
+    </property>
+		<!-- 显示当前数据库名 -->
+    <property>
+        <name>hive.cli.print.current.db</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.schema.verification</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>datanucleus.schema.autoCreateAll</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://hadoop102:9083</value>
+    </property>
+```
+
 - 启动
 
 ```bash
@@ -1506,21 +1538,78 @@ select *from student;
 $ bin/hive -f xxx/hivef.sql > xxx/result.txt
 ```
 
-### 7.5 常用参数配置
+### 7.5 集成 Tez 引擎
 
-- 查询后信息显示配置 `conf/hive-site.xml `
+- 解压 tez：`/opt/module/tez-0.9.1-bin`
+- 同时上传一个 tez 包到 hdfs，用于给集群中其他节点用
+
+```bash
+hadoop fs -put /opt/software/apache-tez-0.9.1-bin.tar.gz/ /tez
+```
+
+- 在 HIVE_HOME/conf 下创建 `tez-site.xml`
 
 ```xml
-<!-- 可以显示表头列名 -->
-<property> 
-	<name>hive.cli.print.header</name> 
-  <value>true</value>
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>${fs.defaultFS}/tez/apache-tez-0.9.1-bin.tar.gz</value>
+    </property>
+    <property>
+         <name>tez.use.cluster.hadoop-libs</name>
+         <value>true</value>
+    </property>
+    <property>
+         <name>tez.history.logging.service.class</name>        
+         <value>org.apache.tez.dag.history.logging.ats.ATSHistoryLoggingService</value>
+    </property>
+</configuration>
+```
+
+- 修改 `hive-env.sh`
+
+```bash
+# Folder containing extra libraries required for hive compilation/execution can be controlled by:
+export TEZ_HOME=/opt/module/tez-0.9.1-bin    #是你的tez的解压目录
+export TEZ_JARS=""
+for jar in `ls $TEZ_HOME |grep jar`; do
+    export TEZ_JARS=$TEZ_JARS:$TEZ_HOME/$jar
+done
+for jar in `ls $TEZ_HOME/lib`; do
+    export TEZ_JARS=$TEZ_JARS:$TEZ_HOME/lib/$jar
+done
+
+export HIVE_AUX_JARS_PATH=/opt/module/hadoop-2.7.2/share/hadoop/common/hadoop-lzo-0.4.20.jar$TEZ_JARS
+```
+
+- 修改 `hive-site.xml`
+
+```xml
+<property>
+    <name>hive.execution.engine</name>
+    <value>tez</value>
 </property>
-<!-- 显示当前数据库名 -->
-<property> 
-  <name>hive.cli.print.current.db</name> 
-  <value>true</value>
-</property>
+```
+
+- 测试
+
+```bash
+# 启动Hive
+$ bin/hive
+
+# 创建表
+hive (default)> create table student(
+id int,
+name string);
+
+# 向表中插入数据
+hive (default)> insert into student values(1,"zhangsan");
+
+# 如果没有报错就表示成功了
+hive (default)> select * from student;
+1       zhangsan
 ```
 
 
