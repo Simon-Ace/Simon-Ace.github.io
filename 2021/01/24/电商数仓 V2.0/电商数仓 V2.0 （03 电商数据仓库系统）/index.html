@@ -451,7 +451,246 @@
 <p>周期型快照事实表中<em>不会保留所有数据，只保留固定时间间隔的数据</em>，例如每天或者每月的销售额。对中间过程不敏感，只关心到一个时间点时的状态。</p>
 <p><strong>3）累积型快照事实表</strong></p>
 <p><em>累计快照事实表用于跟踪业务事实的变化。</em>例如，数据仓库中可能需要累积或者存储订单从下订单开始，到订单商品被打包、运输、和签收的各个业务阶段的时间点数据来跟踪订单声明周期的进展情况。当这个业务过程进行时，事实表的记录也要不断更新。</p>
+<h3 id="2-4-数据仓库建模"><a href="#2-4-数据仓库建模" class="headerlink" title="2.4 数据仓库建模"></a>2.4 数据仓库建模</h3><h4 id="2-4-1-ODS层"><a href="#2-4-1-ODS层" class="headerlink" title="2.4.1 ODS层"></a>2.4.1 ODS层</h4><ul>
+<li>保存着最原始的数据，起到数据备份的作用</li>
+<li>采用数据压缩，减少磁盘占用（压缩到 1/10 ~ 1/20）</li>
+<li>创建分区表，避免之后全表扫描</li>
+</ul>
+<p><strong>原始表之间关系：</strong></p>
+<ul>
+<li>绿色：维度表</li>
+<li>深色：事实表</li>
+<li>白色：会进行维度退化的表</li>
+</ul>
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210128111435826.png" alt="image-20210128111435826">
 
+<h4 id="2-4-2-DWD层"><a href="#2-4-2-DWD层" class="headerlink" title="2.4.2 DWD层"></a>2.4.2 DWD层</h4><p>1、在这里使用<strong>维度建模</strong>，一般采用星型模型，展现出来为星座模型</p>
+<p>2、<strong>维度建模大致分为以下四个步骤：</strong></p>
+<p>选择业务过程 -&gt; 声明粒度 -&gt; 确认维度 -&gt; 确认事实</p>
+<ul>
+<li><p>选择业务过程</p>
+<ul>
+<li>挑选感兴趣的业务线，一条业务线对应一张事实表</li>
+</ul>
+</li>
+<li><p>声明最小粒度</p>
+<ul>
+<li>无论统计啥都能从这个粒度进行计算</li>
+</ul>
+</li>
+<li><p>确认维度</p>
+<ul>
+<li>谁、何处、何时</li>
+<li>维度表：会根据需求进行维度退化</li>
+</ul>
+</li>
+<li><p>确认事实</p>
+<ul>
+<li>即确定「度量值」，个数、次数、件数等信息</li>
+</ul>
+</li>
+</ul>
+<p>3、维度建模到这里已完毕</p>
+<p>4、DWD 层以业务过程为驱动，后面DWS、DWT则以需求为驱动</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>时间</th>
+<th>用户</th>
+<th>地区</th>
+<th>商品</th>
+<th>优惠券</th>
+<th>活动</th>
+<th>编码</th>
+<th>度量值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>订单</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+<td>√</td>
+<td></td>
+<td>件数/金额</td>
+</tr>
+<tr>
+<td>订单详情</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td>件数/金额</td>
+</tr>
+<tr>
+<td>支付</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>金额</td>
+</tr>
+<tr>
+<td>加购</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td>件数/金额</td>
+</tr>
+<tr>
+<td>收藏</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td>个数</td>
+</tr>
+<tr>
+<td>评价</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td>个数</td>
+</tr>
+<tr>
+<td>退款</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+<td>件数/金额</td>
+</tr>
+<tr>
+<td>优惠券领用</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td>个数</td>
+</tr>
+</tbody></table>
+<h4 id="2-4-3-DWS层"><a href="#2-4-3-DWS层" class="headerlink" title="2.4.3 DWS层"></a>2.4.3 DWS层</h4><p><strong>主要作用：</strong>将维度表和关联的事实表进行组合（join），每个维度表生成一个大宽表，避免后续重复join计算</p>
+<p><strong>粒度：</strong>统计各主题对象当天的行为</p>
+<p><strong>每个表包含哪些字段：</strong>以维度表为基准，关联相关事实表的度量值（如下图）</p>
+<p><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210128113346588.png" alt="image-20210128113346588"></p>
+<p>以用户表为例：</p>
+<p><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210128113813789.png" alt="image-20210128113813789"></p>
+<h4 id="2-4-4-DWT层"><a href="#2-4-4-DWT层" class="headerlink" title="2.4.4 DWT层"></a>2.4.4 DWT层</h4><p><strong>作用：</strong>统计事情从第一次发生至今的累积度量值</p>
+<p>例：</p>
+<p><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210128114038540.png" alt="image-20210128114038540"></p>
+<h4 id="2-4-5-ADS层"><a href="#2-4-5-ADS层" class="headerlink" title="2.4.5 ADS层"></a>2.4.5 ADS层</h4><p>根据实际业务需要在前面几张表中进行统计，如 pv，uv，新增，留存等。</p>
+<h2 id="三、ODS-层搭建"><a href="#三、ODS-层搭建" class="headerlink" title="三、ODS 层搭建"></a>三、ODS 层搭建</h2><ol>
+<li>保持数据原貌不做任何修改，起到备份数据的作用（即直接以一串string的原始格式存进来，不作任何解析）</li>
+<li>数据采用LZO压缩，减少磁盘存储空间。100G数据可以压缩到10G以内。</li>
+<li>创建分区表，防止后续的全表扫描，在企业开发中大量使用分区表。</li>
+<li>创建外部表。在企业开发中，除了自己用的临时表，创建内部表外，绝大多数场景都是创建外部表。</li>
+</ol>
+<h3 id="3-1-创建数据库"><a href="#3-1-创建数据库" class="headerlink" title="3.1 创建数据库"></a>3.1 创建数据库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; create database gmall;</span><br><span class="line">&gt; use gmall;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-用户行为数据"><a href="#3-2-用户行为数据" class="headerlink" title="3.2 用户行为数据"></a>3.2 用户行为数据</h3><h4 id="3-2-1-启动日志表"><a href="#3-2-1-启动日志表" class="headerlink" title="3.2.1 启动日志表"></a>3.2.1 启动日志表</h4><ul>
+<li>创建表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">USE</span> gmall;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> ods_start_log;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> ods_start_log (<span class="string">`line`</span> <span class="keyword">string</span>)</span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (<span class="string">`dt`</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span></span><br><span class="line">  INPUTFORMAT <span class="string">'com.hadoop.mapred.DeprecatedLzoTextInputFormat'</span></span><br><span class="line">  OUTPUTFORMAT <span class="string">'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'</span></span><br><span class="line">LOCATION <span class="string">'/warehouse/gmall/ods/ods_start_log'</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据</li>
+</ul>
+<p><code>load</code> 操作是剪切操作，相当于从 hdfs 的一个路径，移动到另一个路径</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> inpath <span class="string">'/origin_data/gmall/log/topic_start/2020-03-10'</span> <span class="keyword">into</span> <span class="keyword">table</span> gmall.ods_start_log <span class="keyword">partition</span>(dt=<span class="string">'2020-03-10'</span>);</span><br><span class="line"><span class="comment">-- 注意：时间格式都配置成YYYY-MM-DD格式，这是Hive默认支持的时间格式</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看数据</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> ods_start_log <span class="keyword">where</span> dt=<span class="string">'2020-03-10'</span> <span class="keyword">limit</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建 lzo 索引</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar /opt/module/hadoop-2.7.2/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /warehouse/gmall/ods/ods_start_log/dt=2020-03-10</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-2-事件日志表"><a href="#3-2-2-事件日志表" class="headerlink" title="3.2.2 事件日志表"></a>3.2.2 事件日志表</h4><ul>
+<li>创建表</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">USE</span> gmall;</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> ods_event_log;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">EXTERNAL</span> <span class="keyword">TABLE</span> ods_event_log(<span class="string">`line`</span> <span class="keyword">string</span>)</span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (<span class="string">`dt`</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span></span><br><span class="line">  INPUTFORMAT <span class="string">'com.hadoop.mapred.DeprecatedLzoTextInputFormat'</span></span><br><span class="line">  OUTPUTFORMAT <span class="string">'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'</span></span><br><span class="line">LOCATION <span class="string">'/warehouse/gmall/ods/ods_event_log'</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>加载数据</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> <span class="keyword">data</span> inpath <span class="string">'/origin_data/gmall/log/topic_event/2020-03-10'</span> <span class="keyword">into</span> <span class="keyword">table</span> gmall.ods_event_log <span class="keyword">partition</span>(dt=<span class="string">'2020-03-10'</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看数据</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> ods_event_log <span class="keyword">where</span> dt=<span class="string">"2020-03-10"</span> <span class="keyword">limit</span> <span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建索引</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop jar /opt/module/hadoop-2.7.2/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /warehouse/gmall/ods/ods_event_log/dt=2020-03-10</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-数据导入脚本"><a href="#3-2-3-数据导入脚本" class="headerlink" title="3.2.3 数据导入脚本"></a>3.2.3 数据导入脚本</h4><p><code>hdfs_to_ods_log.sh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义变量方便修改</span></span><br><span class="line">APP=gmall</span><br><span class="line">HIVE=/opt/module/hive-2.3.0-bin/bin/hive</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是输入的日期按照取输入日期；如果没输入日期取当前时间的前一天</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$1</span>"</span> ] ;<span class="keyword">then</span></span><br><span class="line">   do_date=<span class="variable">$1</span></span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">   do_date=`date -d <span class="string">"-1 day"</span> +%F`</span><br><span class="line"><span class="keyword">fi</span> </span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"=== 日志日期为 <span class="variable">$do_date</span> ==="</span></span><br><span class="line">sql=<span class="string">"</span></span><br><span class="line"><span class="string">load data inpath '/origin_data/gmall/log/topic_start/<span class="variable">$do_date</span>' overwrite into table <span class="variable">$&#123;APP&#125;</span>.ods_start_log partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/gmall/log/topic_event/<span class="variable">$do_date</span>' overwrite into table <span class="variable">$&#123;APP&#125;</span>.ods_event_log partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$HIVE</span> -e <span class="string">"<span class="variable">$sql</span>"</span></span><br><span class="line"></span><br><span class="line">hadoop jar /opt/module/hadoop-2.7.2/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /warehouse/gmall/ods/ods_start_log/dt=<span class="variable">$do_date</span></span><br><span class="line"></span><br><span class="line">hadoop jar /opt/module/hadoop-2.7.2/share/hadoop/common/hadoop-lzo-0.4.20.jar com.hadoop.compression.lzo.DistributedLzoIndexer /warehouse/gmall/ods/ods_event_log/dt=<span class="variable">$do_date</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-业务数据"><a href="#3-3-业务数据" class="headerlink" title="3.3 业务数据"></a>3.3 业务数据</h3><p>从 MySQL 导入 HDFS 的数据</p>
+<h4 id="3-3-1-创建表"><a href="#3-3-1-创建表" class="headerlink" title="3.3.1 创建表"></a>3.3.1 创建表</h4><p>一堆表，以 <strong>订单表</strong> 为例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 增量及更新</span></span><br><span class="line">hive (gmall)&gt;</span><br><span class="line"><span class="keyword">use</span> gmall;</span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">exists</span> ods_order_info;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">external</span> <span class="keyword">table</span> ods_order_info (</span><br><span class="line">    <span class="string">`id`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'订单号'</span>,</span><br><span class="line">    <span class="string">`final_total_amount`</span> <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>) <span class="keyword">COMMENT</span> <span class="string">'订单金额'</span>,</span><br><span class="line">    <span class="string">`order_status`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'订单状态'</span>,</span><br><span class="line">    <span class="string">`user_id`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'用户id'</span>,</span><br><span class="line">    <span class="string">`out_trade_no`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'支付流水号'</span>,</span><br><span class="line">    <span class="string">`create_time`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'创建时间'</span>,</span><br><span class="line">    <span class="string">`operate_time`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'操作时间'</span>,</span><br><span class="line">    <span class="string">`province_id`</span> <span class="keyword">string</span> <span class="keyword">COMMENT</span> <span class="string">'省份ID'</span>,</span><br><span class="line">    <span class="string">`benefit_reduce_amount`</span> <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>) <span class="keyword">COMMENT</span> <span class="string">'优惠金额'</span>,</span><br><span class="line">    <span class="string">`original_total_amount`</span> <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>)  <span class="keyword">COMMENT</span> <span class="string">'原价金额'</span>,</span><br><span class="line">    <span class="string">`feight_fee`</span> <span class="built_in">decimal</span>(<span class="number">10</span>,<span class="number">2</span>)  <span class="keyword">COMMENT</span> <span class="string">'运费'</span></span><br><span class="line">) <span class="keyword">COMMENT</span> <span class="string">'订单表'</span></span><br><span class="line">PARTITIONED <span class="keyword">BY</span> (<span class="string">`dt`</span> <span class="keyword">string</span>)</span><br><span class="line"><span class="keyword">row</span> <span class="keyword">format</span> <span class="keyword">delimited</span> <span class="keyword">fields</span> <span class="keyword">terminated</span> <span class="keyword">by</span> <span class="string">'\t'</span></span><br><span class="line"><span class="keyword">STORED</span> <span class="keyword">AS</span></span><br><span class="line">  INPUTFORMAT <span class="string">'com.hadoop.mapred.DeprecatedLzoTextInputFormat'</span></span><br><span class="line">  OUTPUTFORMAT <span class="string">'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'</span></span><br><span class="line">location <span class="string">'/warehouse/gmall/ods/ods_order_info/'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>其他表的创建略。</p>
+<h4 id="3-3-2-数据导入脚本"><a href="#3-3-2-数据导入脚本" class="headerlink" title="3.3.2 数据导入脚本"></a>3.3.2 数据导入脚本</h4><p><code>hdfs_to_ods_db.sh</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">APP=gmall</span><br><span class="line">HIVE=/opt/module/hive-2.3.0-bin/bin/hive</span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果是输入的日期按照取输入日期；如果没输入日期取当前时间的前一天</span></span><br><span class="line"><span class="keyword">if</span> [ -n <span class="string">"<span class="variable">$2</span>"</span> ] ;<span class="keyword">then</span></span><br><span class="line">    do_date=<span class="variable">$2</span></span><br><span class="line"><span class="keyword">else</span> </span><br><span class="line">    do_date=`date -d <span class="string">"-1 day"</span> +%F`</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">sql1=<span class="string">" </span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/order_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_order_info partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/order_detail/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_order_detail partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/sku_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_sku_info partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/user_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_user_info partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/payment_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_payment_info partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_category1/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_category1 partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_category2/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_category2 partition(dt='<span class="variable">$do_date</span>');</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_category3/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_category3 partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_trademark/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_trademark partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/activity_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_activity_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/activity_order/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_activity_order partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/cart_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_cart_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/comment_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_comment_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/coupon_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_coupon_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/coupon_use/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_coupon_use partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/favor_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_favor_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/order_refund_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_order_refund_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/order_status_log/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_order_status_log partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/spu_info/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_spu_info partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/activity_rule/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_activity_rule partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_dic/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_dic partition(dt='<span class="variable">$do_date</span>'); </span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"></span><br><span class="line">sql2=<span class="string">" </span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_province/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_province;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">load data inpath '/origin_data/<span class="variable">$APP</span>/db/base_region/<span class="variable">$do_date</span>' OVERWRITE into table <span class="variable">$&#123;APP&#125;</span>.ods_base_region;</span></span><br><span class="line"><span class="string">"</span></span><br><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line"><span class="string">"first"</span>)&#123;</span><br><span class="line">    <span class="variable">$HIVE</span> -e <span class="string">"<span class="variable">$sql1</span>"</span></span><br><span class="line">    <span class="variable">$HIVE</span> -e <span class="string">"<span class="variable">$sql2</span>"</span></span><br><span class="line">&#125;;;</span><br><span class="line"><span class="string">"all"</span>)&#123;</span><br><span class="line">    <span class="variable">$HIVE</span> -e <span class="string">"<span class="variable">$sql1</span>"</span></span><br><span class="line">&#125;;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+
+<p>执行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hdfs_to_ods_db.sh first 2020-03-10</span><br><span class="line">hdfs_to_ods_db.sh all 2020-03-11</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> ods_order_detail <span class="keyword">where</span> dt=<span class="string">'2020-03-11'</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、DWD-层搭建"><a href="#四、DWD-层搭建" class="headerlink" title="四、DWD 层搭建"></a>四、DWD 层搭建</h2><h3 id="4-1-用户行为数据"><a href="#4-1-用户行为数据" class="headerlink" title="4.1 用户行为数据"></a>4.1 用户行为数据</h3><ul>
+<li><p>将 JSON 数据解析为标准的列数据</p>
+</li>
+<li><p>创建 UDF 函数（解析json列）</p>
+</li>
+<li><p>创建 UDTF 函数（一进多出，将一行数据拆分成多行）</p>
+</li>
+</ul>
+<h3 id="4-2-业务数据"><a href="#4-2-业务数据" class="headerlink" title="4.2 业务数据"></a>4.2 业务数据</h3><ul>
+<li>进行维度建模</li>
+<li>join多张表，形成一个大宽表</li>
+<li>拉链表<ul>
+<li>用于处理缓慢变化的数据</li>
+<li>如果每日全量记录，太浪费</li>
+<li>拉链表，有变化的行才会记录</li>
+<li>两个特殊的列  start_time, end_time 分别记录这条的生效和结束时间，有变化时就会产生一个新的记录行</li>
+</ul>
+</li>
+</ul>
+<h2 id="五、DWS-层搭建"><a href="#五、DWS-层搭建" class="headerlink" title="五、DWS 层搭建"></a>五、DWS 层搭建</h2>
       </div>
       
         <br>
@@ -462,10 +701,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-01-24T11:54:14+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-02-03T09:31:59+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2021年1月24日</p>
+    <p>更新于 2021年2月3日</p>
   </a>
 </div>
 
@@ -629,7 +868,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（03-电商数据仓库系统）"><span class="toc-text">电商数仓 V2.0 （03 电商数据仓库系统）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、数仓分层"><span class="toc-text">一、数仓分层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-为什么要分层"><span class="toc-text">1.1 为什么要分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-数据集市与数据仓库"><span class="toc-text">1.2 数据集市与数据仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、数仓理论简介"><span class="toc-text">二、数仓理论简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-范式理论"><span class="toc-text">2.1 范式理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-关系建模和维度建模"><span class="toc-text">2.2 关系建模和维度建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-关系建模"><span class="toc-text">2.2.1 关系建模</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-维度建模"><span class="toc-text">2.2.2 维度建模</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-维度表和事实表"><span class="toc-text">2.3 维度表和事实表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-维度表"><span class="toc-text">2.3.1 维度表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-事实表"><span class="toc-text">2.3.2 事实表</span></a></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（03-电商数据仓库系统）"><span class="toc-text">电商数仓 V2.0 （03 电商数据仓库系统）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、数仓分层"><span class="toc-text">一、数仓分层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-为什么要分层"><span class="toc-text">1.1 为什么要分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-数据集市与数据仓库"><span class="toc-text">1.2 数据集市与数据仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、数仓理论简介"><span class="toc-text">二、数仓理论简介</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-范式理论"><span class="toc-text">2.1 范式理论</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-关系建模和维度建模"><span class="toc-text">2.2 关系建模和维度建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-1-关系建模"><span class="toc-text">2.2.1 关系建模</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-2-维度建模"><span class="toc-text">2.2.2 维度建模</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-维度表和事实表"><span class="toc-text">2.3 维度表和事实表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-1-维度表"><span class="toc-text">2.3.1 维度表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-2-事实表"><span class="toc-text">2.3.2 事实表</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-数据仓库建模"><span class="toc-text">2.4 数据仓库建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-ODS层"><span class="toc-text">2.4.1 ODS层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-DWD层"><span class="toc-text">2.4.2 DWD层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-DWS层"><span class="toc-text">2.4.3 DWS层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-4-DWT层"><span class="toc-text">2.4.4 DWT层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-5-ADS层"><span class="toc-text">2.4.5 ADS层</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、ODS-层搭建"><span class="toc-text">三、ODS 层搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-创建数据库"><span class="toc-text">3.1 创建数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-用户行为数据"><span class="toc-text">3.2 用户行为数据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-1-启动日志表"><span class="toc-text">3.2.1 启动日志表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-2-事件日志表"><span class="toc-text">3.2.2 事件日志表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-3-数据导入脚本"><span class="toc-text">3.2.3 数据导入脚本</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-业务数据"><span class="toc-text">3.3 业务数据</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-创建表"><span class="toc-text">3.3.1 创建表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-数据导入脚本"><span class="toc-text">3.3.2 数据导入脚本</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、DWD-层搭建"><span class="toc-text">四、DWD 层搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-用户行为数据"><span class="toc-text">4.1 用户行为数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-业务数据"><span class="toc-text">4.2 业务数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、DWS-层搭建"><span class="toc-text">五、DWS 层搭建</span></a></li></ol></li></ol>
     </div>
   </section>
 
@@ -802,7 +1041,7 @@
         
           <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(7)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(22)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(23)</div></a></li>
         
       </ul>
     </div>
@@ -856,7 +1095,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 17.33px; color: #828282">数仓</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 17.33px; color: #828282">数仓</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 

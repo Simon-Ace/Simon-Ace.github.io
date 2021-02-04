@@ -373,6 +373,31 @@
 <p>日期维度可以一次性导入一年或若干年的数据。</p>
 <p>3）地区维度</p>
 <p>省份表、地区表</p>
+<h4 id="2-5-业务数据导入-HDFS"><a href="#2-5-业务数据导入-HDFS" class="headerlink" title="2.5 业务数据导入 HDFS"></a>2.5 业务数据导入 HDFS</h4><ul>
+<li>使用 sqoop 工具</li>
+<li>时间处理：T + 1模式，即后一天导入前一天的数据</li>
+<li>导表类型：<ul>
+<li>全量：<code>select * from table where 1=1</code>（1=1 是为了适应 Sqoop 中 <code>and  $CONDITIONS</code>的语法）</li>
+<li>增量：<code>select * from table where createtime paytime = $cur_date</code></li>
+<li>新增和变化：``select * from table where createtime or operatetime = $cur_date`</li>
+</ul>
+</li>
+</ul>
+<p><strong>执行脚本：</strong></p>
+<ul>
+<li>内容略</li>
+<li>执行：<ul>
+<li>参数：<ul>
+<li>参数1：first or all，表示第一次或每日，first会导入两个地区表，all就不导入了</li>
+<li>参数2：日期</li>
+</ul>
+</li>
+<li><code>mysql_to_hdfs.sh first 2020-03-10</code></li>
+<li><code>mysql_to_hdfs.sh all 2020-03-11</code></li>
+<li>一天的数据导入大概20分钟</li>
+</ul>
+</li>
+</ul>
 
       </div>
       
@@ -384,10 +409,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-01-24T00:41:20+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-02-01T18:34:18+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2021年1月24日</p>
+    <p>更新于 2021年2月1日</p>
   </a>
 </div>
 
@@ -551,7 +576,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（02-业务数据采集模块）"><span class="toc-text">电商数仓 V2.0 （02 业务数据采集模块）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、电商业务简介"><span class="toc-text">一、电商业务简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、业务数据采集模块"><span class="toc-text">二、业务数据采集模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-MySQL"><span class="toc-text">2.1 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Sqoop"><span class="toc-text">2.2 Sqoop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-业务数据生成"><span class="toc-text">2.3 业务数据生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-同步策略"><span class="toc-text">2.4 同步策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-全量同步策略"><span class="toc-text">2.4.1 全量同步策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-增量同步策略"><span class="toc-text">2.4.2 增量同步策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-新增及变化策略"><span class="toc-text">2.4.3 新增及变化策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-4-特殊策略"><span class="toc-text">2.4.4 特殊策略</span></a></li></ol></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#电商数仓-V2-0-（02-业务数据采集模块）"><span class="toc-text">电商数仓 V2.0 （02 业务数据采集模块）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、电商业务简介"><span class="toc-text">一、电商业务简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、业务数据采集模块"><span class="toc-text">二、业务数据采集模块</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-MySQL"><span class="toc-text">2.1 MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Sqoop"><span class="toc-text">2.2 Sqoop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-业务数据生成"><span class="toc-text">2.3 业务数据生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-同步策略"><span class="toc-text">2.4 同步策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-1-全量同步策略"><span class="toc-text">2.4.1 全量同步策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-2-增量同步策略"><span class="toc-text">2.4.2 增量同步策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-3-新增及变化策略"><span class="toc-text">2.4.3 新增及变化策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-4-特殊策略"><span class="toc-text">2.4.4 特殊策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-业务数据导入-HDFS"><span class="toc-text">2.5 业务数据导入 HDFS</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
   </section>
 
@@ -724,7 +749,7 @@
         
           <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(7)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(22)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(23)</div></a></li>
         
       </ul>
     </div>
@@ -778,7 +803,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 17.33px; color: #828282">数仓</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20.67px; color: #6c6c6c">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 17.33px; color: #828282">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 17.33px; color: #828282">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 14px; color: #999">git</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 17.33px; color: #828282">数仓</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
