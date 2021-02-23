@@ -13,6 +13,8 @@ meta:
 
 ### 1.1 Spring 与 SpringBoot
 
+SpringBoot 出现原因：整合各种 Spring 框架，简化配置，快速上手开发
+
 ### 1.2 SpringBoot 第一个程序
 
 #### 1.2.1 maven 设置
@@ -68,7 +70,33 @@ public class HelloController {
 
 
 
-### 1.3 了解自动配置原理
+### 1.3 了解自动配置原理（重点）
 
 - SpringBoot 底层整合了 Sping, SpringMVC等
+
+
+
+## 二、核心功能
+
+### 2.1 配置文件
+
+### 2.2 Web 开发
+
+#### 2.2.1 请求参数处理
+
+- REST 风格
+  - GET-查询    DELETE-删除     PUT-修改      POST-保存
+
+
+
+- **请求方法注解**
+
+```java
+// 原始写法
+@RequestMapping(value = "/hello", method = RequestMethod.POST)
+// 简略写法
+@PostMapping("/hello")
+```
+
+#### 2.2.2 响应参数处理
 
