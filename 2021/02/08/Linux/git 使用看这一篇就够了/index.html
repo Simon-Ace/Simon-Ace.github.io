@@ -319,6 +319,12 @@
 <p>git 对象</p>
 <h2 id="二、基本操作"><a href="#二、基本操作" class="headerlink" title="二、基本操作"></a>二、基本操作</h2><h3 id="2-1-初始化仓库"><a href="#2-1-初始化仓库" class="headerlink" title="2.1 初始化仓库"></a>2.1 初始化仓库</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
 
+<h2 id="三、进阶操作"><a href="#三、进阶操作" class="headerlink" title="三、进阶操作"></a>三、进阶操作</h2><ul>
+<li>同步另一个分支的修改</li>
+</ul>
+<p>在 A、B 分支之前处于一个位置，之后A修改了，变成A’，想把B同步到A’的位置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先切换到 B 分支</span></span><br><span class="line">git checkout B</span><br><span class="line"><span class="comment"># 合并 A1 的修改</span></span><br><span class="line">git merge A</span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -330,10 +336,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-02-08T14:56:01+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-03-03T15:13:31+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2021年2月8日</p>
+    <p>更新于 2021年3月3日</p>
   </a>
 </div>
 
@@ -497,7 +503,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基础概念"><span class="toc-text">一、基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、基本操作"><span class="toc-text">二、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-初始化仓库"><span class="toc-text">2.1 初始化仓库</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基础概念"><span class="toc-text">一、基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、基本操作"><span class="toc-text">二、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-初始化仓库"><span class="toc-text">2.1 初始化仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、进阶操作"><span class="toc-text">三、进阶操作</span></a></li></ol>
     </div>
   </section>
 
@@ -664,11 +670,13 @@
         
           <li><a class="flat-box" title="/categories/JVM/" href="/categories/JVM/"><div class='name'>JVM</div><div class='badge'>(1)</div></a></li>
         
+          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/"><div class='name'>Java</div><div class='badge'>(1)</div></a></li>
+        
           <li><a class="flat-box" title="/categories/Linux/" href="/categories/Linux/"><div class='name'>Linux</div><div class='badge'>(2)</div></a></li>
         
           <li><a class="flat-box" title="/categories/Python/" href="/categories/Python/"><div class='name'>Python</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(8)</div></a></li>
+          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(10)</div></a></li>
         
           <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(25)</div></a></li>
         
@@ -724,7 +732,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 21.5px; color: #666">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 19px; color: #777">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16.5px; color: #888">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 19px; color: #777">数仓</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 21.5px; color: #666">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Java-注解-反射/" style="font-size: 14px; color: #999">Java, 注解, 反射</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 19px; color: #777">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16.5px; color: #888">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/vue/" style="font-size: 14px; color: #999">vue</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 19px; color: #777">数仓</a> <a href="/tags/模板/" style="font-size: 14px; color: #999">模板</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
