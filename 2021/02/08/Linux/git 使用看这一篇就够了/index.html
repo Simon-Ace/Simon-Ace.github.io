@@ -325,6 +325,16 @@
 <p>在 A、B 分支之前处于一个位置，之后A修改了，变成A’，想把B同步到A’的位置</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先切换到 B 分支</span></span><br><span class="line">git checkout B</span><br><span class="line"><span class="comment"># 合并 A1 的修改</span></span><br><span class="line">git merge A</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>删除某次 commit</li>
+</ul>
+<h5 id="1-git-reset"><a href="#1-git-reset" class="headerlink" title="1. git reset"></a>1. git reset</h5><ul>
+<li><code>git reset</code> ：回滚到某次提交。</li>
+<li><code>git reset --soft</code>：此次提交之后的修改会被退回到暂存区。</li>
+<li><code>git reset --hard</code>：此次提交之后的修改不做任何保留，<code>git status</code> 查看工作区是没有记录的。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">log</span> <span class="comment">// 查询要回滚的 commit_id</span></span><br><span class="line">git reset --hard commit_id <span class="comment">// HEAD 就会指向此次的提交记录</span></span><br><span class="line">git push origin HEAD --force <span class="comment">// 强制推送到远端</span></span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -336,7 +346,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-03-03T15:13:31+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-03-03T15:36:10+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2021年3月3日</p>
@@ -503,7 +513,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基础概念"><span class="toc-text">一、基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、基本操作"><span class="toc-text">二、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-初始化仓库"><span class="toc-text">2.1 初始化仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、进阶操作"><span class="toc-text">三、进阶操作</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、基础概念"><span class="toc-text">一、基础概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、基本操作"><span class="toc-text">二、基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-初始化仓库"><span class="toc-text">2.1 初始化仓库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、进阶操作"><span class="toc-text">三、进阶操作</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-git-reset"><span class="toc-text">1. git reset</span></a></li></ol></li></ol></li></ol></li></ol>
     </div>
   </section>
 
