@@ -13,7 +13,7 @@ meta:
 
 ### 1.1 Spring 与 SpringBoot
 
-SpringBoot 出现原因：整合各种 Spring 框架，简化配置，快速上手开发
+SpringBoot 出现原因：整合各种 Spring 框架，简化配置，快速上手开发。【约定大于配置】
 
 ### 1.2 SpringBoot 第一个程序
 
