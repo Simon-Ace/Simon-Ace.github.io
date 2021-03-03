@@ -43,3 +43,17 @@ git checkout B
 git merge A
 ```
 
+- 删除某次 commit
+
+##### 1. git reset
+
+- `git reset` ：回滚到某次提交。
+- `git reset --soft`：此次提交之后的修改会被退回到暂存区。
+- `git reset --hard`：此次提交之后的修改不做任何保留，`git status` 查看工作区是没有记录的。
+
+```cpp
+git log // 查询要回滚的 commit_id
+git reset --hard commit_id // HEAD 就会指向此次的提交记录
+git push origin HEAD --force // 强制推送到远端
+```
+
