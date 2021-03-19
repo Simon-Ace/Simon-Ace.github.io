@@ -625,6 +625,13 @@
 <td>http服务的端口，可查看 HDFS 存储内容</td>
 </tr>
 <tr>
+<td>YARN</td>
+<td>Resource Manager</td>
+<td>8088</td>
+<td>yarn.resourcemanager.webapp.address</td>
+<td>Yarn http服务的端口</td>
+</tr>
+<tr>
 <td>HBase</td>
 <td>Master</td>
 <td>16000</td>
@@ -668,6 +675,16 @@
 </ul>
 <img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20201110104755190.png" alt="image-20201110104755190" style="zoom: 33%;">
 
+<h3 id="3-6-其他"><a href="#3-6-其他" class="headerlink" title="3.6 其他"></a>3.6 其他</h3><h4 id="3-6-1-增加-Yarn-队列"><a href="#3-6-1-增加-Yarn-队列" class="headerlink" title="3.6.1 增加 Yarn 队列"></a>3.6.1 增加 Yarn 队列</h4><p><a href="https://blog.csdn.net/lijingjingchn/article/details/84876193" target="_blank" rel="noopener">https://blog.csdn.net/lijingjingchn/article/details/84876193</a></p>
+<p>修改 <code>etc/hadoop/capacity-scheduler.xml</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.scheduler.capacity.root.queues<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>default, myqueue<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">description</span>&gt;</span>The queues at the this level (root is the root queue).</span><br><span class="line">  <span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.scheduler.capacity.root.default.capacity<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>40.9<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Default queue target capacity.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>yarn.scheduler.capacity.root.myqueue.capacity<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>59.1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Default queue target capacity.<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>刷新配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/yarn rmadmin -refreshQueues</span><br></pre></td></tr></table></figure>
+
+<p>注意：</p>
+<p>热更新只能增加队列，要删除队列只能重启 RM。</p>
+<p><a href="https://stackoverflow.com/questions/42589764/how-to-delete-a-queue-in-yarn" target="_blank" rel="noopener">https://stackoverflow.com/questions/42589764/how-to-delete-a-queue-in-yarn</a></p>
 <h2 id="四、Zookeeper-配置"><a href="#四、Zookeeper-配置" class="headerlink" title="四、Zookeeper 配置"></a>四、Zookeeper 配置</h2><h3 id="4-1-本地模式"><a href="#4-1-本地模式" class="headerlink" title="4.1 本地模式"></a>4.1 本地模式</h3><p><strong>1、安装前准备</strong></p>
 <ul>
 <li>安装Jdk</li>
@@ -1189,6 +1206,30 @@
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将内存数据落盘</span></span><br><span class="line">&gt; flush <span class="string">'student'</span></span><br></pre></td></tr></table></figure>
 
+<h2 id="九、Flink-配置"><a href="#九、Flink-配置" class="headerlink" title="九、Flink 配置"></a>九、Flink 配置</h2><h3 id="9-1-Standalone-模式"><a href="#9-1-Standalone-模式" class="headerlink" title="9.1 Standalone 模式"></a>9.1 Standalone 模式</h3><p>1、准备安装包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flink-1.10.1-bin-scala_2.12.tgz</span><br></pre></td></tr></table></figure>
+
+<p>2、修改 <code>conf/flink-conf.yaml</code> 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jobmanager.rpc.address: hadoop102</span><br></pre></td></tr></table></figure>
+
+<p>3、修改 <code>conf/slaves</code> 文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hadoop103</span><br><span class="line">hadoop104</span><br></pre></td></tr></table></figure>
+
+<p>4、分发</p>
+<p>5、启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/start-cluster.sh</span><br></pre></td></tr></table></figure>
+
+<p>6、访问 <a href="http://localhost:8081" target="_blank" rel="noopener">http://localhost:8081</a> 可以对 flink 集群和任务进行监控管理</p>
+<p>7、提交任务</p>
+<ul>
+<li>web 模式</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210316201034608.png" alt="image-20210316201034608"></p>
+<ul>
+<li>命令行</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./flink run -c com.atguigu.wc.StreamWordCount –p 2 FlinkTutorial-1.0-SNAPSHOT-jar-with-dependencies.jar --host lcoalhost –port 7777</span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -1200,10 +1241,10 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-02-01T17:55:35+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-03-18T22:44:02+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
-    <p>更新于 2021年2月1日</p>
+    <p>更新于 2021年3月18日</p>
   </a>
 </div>
 
@@ -1277,16 +1318,16 @@
                       <span class="art-item-left">
                           <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
                           <h4>
-                              <a href="/2020/09/17/Linux/vim 常用操作/" rel="prev" title="vim 常用操作">
+                              <a href="/2020/09/23/Spring/SpringBoot集成Prometheus/" rel="prev" title="SpringBoot 集成 Prometheus">
                                 
-                                    vim 常用操作
+                                    SpringBoot 集成 Prometheus
                                 
                               </a>
                           </h4>
                           
                               
                               <h6 class="tags">
-                                  <a class="tag" href="/tags/vim-教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> vim, 教程</a>
+                                  <a class="tag" href="/tags/SpringBoot-Prometheus/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> SpringBoot, Prometheus</a>
                               </h6>
                           
                       </span>
@@ -1297,16 +1338,16 @@
                       <span class="art-item-right" aria-hidden="true">
                           <h6>下一页&nbsp;<i class="fas fa-chevron-right" aria-hidden="true"></i></h6>
                           <h4>
-                              <a href="/2020/09/01/Hadoop/构建 Hadoop 的 Docker 编译环境/" rel="prev" title="构建Hadoop的Docker编译环境">
+                              <a href="/2020/09/17/Linux/vim 常用操作/" rel="prev" title="vim 常用操作">
                                   
-                                      构建Hadoop的Docker编译环境
+                                      vim 常用操作
                                   
                               </a>
                           </h4>
                           
                               
                               <h6 class="tags">
-                                  <a class="tag" href="/tags/docker-教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> docker,教程</a>
+                                  <a class="tag" href="/tags/vim-教程/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> vim, 教程</a>
                               </h6>
                           
                       </span>
@@ -1367,7 +1408,7 @@
 </header>
 
     <div class='content pure'>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Hadoop-配置"><span class="toc-text">三、Hadoop 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-常用端口记录"><span class="toc-text">3.4 常用端口记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-HA"><span class="toc-text">3.5 HA</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Zookeeper-配置"><span class="toc-text">四、Zookeeper 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-本地模式"><span class="toc-text">4.1 本地模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-集群模式"><span class="toc-text">4.2 集群模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-客户端操作"><span class="toc-text">4.3 客户端操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、Kakfa-配置"><span class="toc-text">五、Kakfa 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-环境准备"><span class="toc-text">5.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-集群配置"><span class="toc-text">5.2 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-命令行操作"><span class="toc-text">5.3 命令行操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Spark-配置"><span class="toc-text">六、Spark 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-环境准备"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-本地模式-Local"><span class="toc-text">6.2 本地模式 Local</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Standalone-模式"><span class="toc-text">6.3 Standalone 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-Spark-server配置"><span class="toc-text">6.3.1 Spark server配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-spark-history-server"><span class="toc-text">6.3.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Yarn-模式"><span class="toc-text">6.4 Yarn 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-1-spark-server-配置"><span class="toc-text">6.4.1 spark server 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-2-spark-history-server"><span class="toc-text">6.4.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-5-WordCount-程序"><span class="toc-text">6.5 WordCount 程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、Hive-配置"><span class="toc-text">七、Hive 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-单机默认配置"><span class="toc-text">7.1 单机默认配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-修改默认数据库（derby-gt-MySQL）"><span class="toc-text">7.2 修改默认数据库（derby -&gt; MySQL）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-1-安装-MySQL"><span class="toc-text">7.2.1 安装 MySQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-2-修改-hive-元数据库"><span class="toc-text">7.2.2 修改 hive 元数据库</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Beeline-连接"><span class="toc-text">7.3 Beeline 连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-常用交互命令"><span class="toc-text">7.4 常用交互命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-集成-Tez-引擎"><span class="toc-text">7.5 集成 Tez 引擎</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、HBase-配置"><span class="toc-text">八、HBase 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-集群配置"><span class="toc-text">8.1 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-常用操作"><span class="toc-text">8.2 常用操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-1-namespace"><span class="toc-text">8.2.1 namespace</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-2-DDL"><span class="toc-text">8.2.2 DDL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-3-DML"><span class="toc-text">8.2.3 DML</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-4-其他操作"><span class="toc-text">8.2.4 其他操作</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、安装-CentOS-6-amp-基本配置"><span class="toc-text">一、安装 CentOS 6 &amp; 基本配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、安装-JAVA-和-Hadoop"><span class="toc-text">二、安装 JAVA 和 Hadoop</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、Hadoop-配置"><span class="toc-text">三、Hadoop 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-本地运行模式"><span class="toc-text">3.1 本地运行模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-伪分布式"><span class="toc-text">3.2 伪分布式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-完全分布式"><span class="toc-text">3.3 完全分布式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-1-集群配置"><span class="toc-text">3.3.1 集群配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-2-集群单点启动"><span class="toc-text">3.3.2 集群单点启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-3-集群一键启动"><span class="toc-text">3.3.3 集群一键启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-4-配置历史服务器-amp-日志聚集"><span class="toc-text">3.3.4 配置历史服务器 &amp; 日志聚集</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-5-集群时间同步"><span class="toc-text">3.3.5 集群时间同步</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-常用端口记录"><span class="toc-text">3.4 常用端口记录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-HA"><span class="toc-text">3.5 HA</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-其他"><span class="toc-text">3.6 其他</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-6-1-增加-Yarn-队列"><span class="toc-text">3.6.1 增加 Yarn 队列</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、Zookeeper-配置"><span class="toc-text">四、Zookeeper 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-本地模式"><span class="toc-text">4.1 本地模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-集群模式"><span class="toc-text">4.2 集群模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-客户端操作"><span class="toc-text">4.3 客户端操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、Kakfa-配置"><span class="toc-text">五、Kakfa 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-环境准备"><span class="toc-text">5.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-集群配置"><span class="toc-text">5.2 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-命令行操作"><span class="toc-text">5.3 命令行操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Spark-配置"><span class="toc-text">六、Spark 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-环境准备"><span class="toc-text">6.1 环境准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-本地模式-Local"><span class="toc-text">6.2 本地模式 Local</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Standalone-模式"><span class="toc-text">6.3 Standalone 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-Spark-server配置"><span class="toc-text">6.3.1 Spark server配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-spark-history-server"><span class="toc-text">6.3.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4-Yarn-模式"><span class="toc-text">6.4 Yarn 模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-1-spark-server-配置"><span class="toc-text">6.4.1 spark server 配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-2-spark-history-server"><span class="toc-text">6.4.2 spark-history-server</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-5-WordCount-程序"><span class="toc-text">6.5 WordCount 程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、Hive-配置"><span class="toc-text">七、Hive 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-单机默认配置"><span class="toc-text">7.1 单机默认配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-修改默认数据库（derby-gt-MySQL）"><span class="toc-text">7.2 修改默认数据库（derby -&gt; MySQL）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-1-安装-MySQL"><span class="toc-text">7.2.1 安装 MySQL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-2-修改-hive-元数据库"><span class="toc-text">7.2.2 修改 hive 元数据库</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-Beeline-连接"><span class="toc-text">7.3 Beeline 连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-4-常用交互命令"><span class="toc-text">7.4 常用交互命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-5-集成-Tez-引擎"><span class="toc-text">7.5 集成 Tez 引擎</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、HBase-配置"><span class="toc-text">八、HBase 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-集群配置"><span class="toc-text">8.1 集群配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-常用操作"><span class="toc-text">8.2 常用操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-1-namespace"><span class="toc-text">8.2.1 namespace</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-2-DDL"><span class="toc-text">8.2.2 DDL</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-3-DML"><span class="toc-text">8.2.3 DML</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-4-其他操作"><span class="toc-text">8.2.4 其他操作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#九、Flink-配置"><span class="toc-text">九、Flink 配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-Standalone-模式"><span class="toc-text">9.1 Standalone 模式</span></a></li></ol></li></ol>
     </div>
   </section>
 
@@ -1540,9 +1581,9 @@
         
           <li><a class="flat-box" title="/categories/Python/" href="/categories/Python/"><div class='name'>Python</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(10)</div></a></li>
+          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(11)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(25)</div></a></li>
+          <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(26)</div></a></li>
         
       </ul>
     </div>
@@ -1596,7 +1637,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 21.5px; color: #666">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Java-注解-反射/" style="font-size: 14px; color: #999">Java, 注解, 反射</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 19px; color: #777">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16.5px; color: #888">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/vue/" style="font-size: 14px; color: #999">vue</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 19px; color: #777">数仓</a> <a href="/tags/模板/" style="font-size: 14px; color: #999">模板</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Flink/" style="font-size: 14px; color: #999">Flink</a> <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 21.5px; color: #666">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Java-注解-反射/" style="font-size: 14px; color: #999">Java, 注解, 反射</a> <a href="/tags/Linux/" style="font-size: 19px; color: #777">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 19px; color: #777">Linux, 压缩</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16.5px; color: #888">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/python/" style="font-size: 14px; color: #999">python</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/vue/" style="font-size: 14px; color: #999">vue</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 19px; color: #777">数仓</a> <a href="/tags/模板/" style="font-size: 14px; color: #999">模板</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
