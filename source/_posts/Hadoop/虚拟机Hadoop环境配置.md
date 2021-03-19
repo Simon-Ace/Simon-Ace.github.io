@@ -735,6 +735,7 @@ $ sudo ntpdate -u pool.ntp.org
 | 组件 | 节点     | 默认端口 | 配置                      | 用途说明                             |
 | ---- | -------- | -------- | ------------------------- | ------------------------------------ |
 | HDFS | NameNode | 50070    | dfs.namenode.http-address | http服务的端口，可查看 HDFS 存储内容 |
+| YARN | Resource Manager | 8088 | yarn.resourcemanager.webapp.address | Yarn http服务的端口 |
 | HBase | Master | 16000 |  | Master RPC Port（远程通信调用） |
 |  | Master | 16010 |  | Master Web Port |
 |  | Regionserver | 16020 |  | Regionserver RPC Port |
@@ -749,6 +750,47 @@ $ sudo ntpdate -u pool.ntp.org
 - 在 NN 上启动 failoverController（zkfc），作为 Zookeeper 的客户端，实现与 zk 集群的交互和监测
 
 <img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20201110104755190.png" alt="image-20201110104755190" style="zoom: 33%;" />
+
+### 3.6 其他
+
+#### 3.6.1 增加 Yarn 队列
+
+https://blog.csdn.net/lijingjingchn/article/details/84876193
+
+修改 `etc/hadoop/capacity-scheduler.xml`
+
+```xml
+<property>
+  <name>yarn.scheduler.capacity.root.queues</name>
+  <value>default, myqueue</value>
+  <description>The queues at the this level (root is the root queue).
+  </description>
+</property>
+
+  <property>
+    <name>yarn.scheduler.capacity.root.default.capacity</name>
+    <value>40.9</value>
+    <description>Default queue target capacity.</description>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.capacity.root.myqueue.capacity</name>
+    <value>59.1</value>
+    <description>Default queue target capacity.</description>
+  </property>
+```
+
+刷新配置：
+
+```bash
+bin/yarn rmadmin -refreshQueues
+```
+
+注意：
+
+热更新只能增加队列，要删除队列只能重启 RM。
+
+<https://stackoverflow.com/questions/42589764/how-to-delete-a-queue-in-yarn>
 
 ## 四、Zookeeper 配置
 
@@ -1862,5 +1904,52 @@ $ bin/hbase shell
 ```bash
 # 将内存数据落盘
 > flush 'student'
+```
+
+
+
+## 九、Flink 配置
+
+### 9.1 Standalone 模式
+
+1、准备安装包
+
+```
+flink-1.10.1-bin-scala_2.12.tgz
+```
+
+2、修改 `conf/flink-conf.yaml` 文件
+
+```
+jobmanager.rpc.address: hadoop102
+```
+
+3、修改 `conf/slaves` 文件
+
+```
+hadoop103
+hadoop104
+```
+
+4、分发
+
+5、启动
+
+```bash
+./bin/start-cluster.sh
+```
+
+6、访问 http://localhost:8081 可以对 flink 集群和任务进行监控管理
+
+7、提交任务
+
+- web 模式
+
+![image-20210316201034608](https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210316201034608.png)
+
+- 命令行
+
+```bash
+./flink run -c com.atguigu.wc.StreamWordCount –p 2 FlinkTutorial-1.0-SNAPSHOT-jar-with-dependencies.jar --host lcoalhost –port 7777
 ```
 

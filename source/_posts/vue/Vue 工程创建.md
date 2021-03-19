@@ -72,7 +72,30 @@ vue ui
 
 
 
+## 三、生产优化
 
+- 移除 console 输出
+
+- 查看打包报告
+
+能够看到各种环境的占比；
+
+或者使用命令行
+
+```bash
+vue-cli-service build --report
+```
+
+
+
+<img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210310101101647.png" alt="image-20210310101101647" style="zoom: 25%;" />
+
+- 分开 prod 和 dev 的配置文件
+- 使用 CDN 加载
+
+减小包的大小
+
+- 路由懒加载
 
 [基于Vue、ElementUI的换肤解决方案](https://neveryu.github.io/2019/07/01/vue-element-change-theme/)
 
