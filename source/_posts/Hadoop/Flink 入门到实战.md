@@ -245,3 +245,36 @@ CountWindow：按照指定的数据条数生成一个Window，与时间无关
 
 <img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20210319104829248.png" alt="image-20210319104829248" style="zoom:50%;" />
 
+### 3.2 Window API
+
+
+
+## 四、时间语义 & Watermark
+
+### 4.1 Flink中的时间语义
+
+- **Event Time：事件创建时间**
+- Ingestion Time：数据进入Flink的时间
+- Processing Time：执行操作算子的本地系统时间，与机器相关
+
+Event Time是事件创建的时间。它通常由事件中的时间戳描述，例如采集的日志数据中，每一条日志都会记录自己的生成时间，Flink通过时间戳分配器访问事件时间戳。
+
+### 4.2 Watermark
+
+#### 4.2.1 概念及作用
+
+**出现原因：**用于处理网络延迟、分布式延迟等造成的数据乱序问题
+
+**工作方式：**
+
+- 伪装成一个普通数据插入到数据流中，基本只包含时间信息
+- Flink 读到 watermark 证明该 watermark 中时间点前的数据已全部到达，可以关闭对应的 bucket 进行处理
+- 为了能够尽量包容延迟数据，会将 watermark 的时间比实际收到的数据时间慢一些（如2-3s），这样就可以把几秒内的延迟数据包容进来了
+- 猜测：如果延迟时间过长，超过了 watermark 设置的时间，就会被丢弃
+
+### 
+
+## 五、Flink 状态管理
+
+状态：相当于是之前task留下来的数据，用于和新的数据流数据进行计算用的？
+

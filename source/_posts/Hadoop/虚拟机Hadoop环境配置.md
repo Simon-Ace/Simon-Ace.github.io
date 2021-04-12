@@ -734,7 +734,9 @@ $ sudo ntpdate -u pool.ntp.org
 
 | 组件 | 节点     | 默认端口 | 配置                      | 用途说明                             |
 | ---- | -------- | -------- | ------------------------- | ------------------------------------ |
+| HDFS | DataNode | 50020    | dfs.datanode.ipc.address | ipc服务的端口 |
 | HDFS | NameNode | 50070    | dfs.namenode.http-address | http服务的端口，可查看 HDFS 存储内容 |
+| HDFS | NameNode | 8020    | fs.defaultFS | 接收Client连接的RPC端口，用于获取文件系统metadata信息 |
 | YARN | Resource Manager | 8088 | yarn.resourcemanager.webapp.address | Yarn http服务的端口 |
 | HBase | Master | 16000 |  | Master RPC Port（远程通信调用） |
 |  | Master | 16010 |  | Master Web Port |
@@ -791,6 +793,203 @@ bin/yarn rmadmin -refreshQueues
 热更新只能增加队列，要删除队列只能重启 RM。
 
 <https://stackoverflow.com/questions/42589764/how-to-delete-a-queue-in-yarn>
+
+#### 3.6.2 配置 node label
+
+> 官方文档参考：
+> https://hadoop.apache.org/docs/r2.7.2/hadoop-yarn/hadoop-yarn-site/NodeLabel.html
+>
+> cloudera 文档参考（推荐）
+> https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.5/bk_yarn-resource-management/content/configuring_node_labels.html
+
+1）先创建 node-label-conf 存放的路径
+
+```bash
+hadoop fs -mkdir /node-labels-conf
+```
+
+2）配置yarn-site.xml ，增加
+```bash
+    <!--开启node label -->
+    <property>
+        <name>yarn.node-labels.fs-store.root-dir</name>
+        <value>hdfs://hadoop102:9000/node-labels-conf/</value>
+        <!--9000端口号从core-site.xml中找-->
+    </property>
+    <property>
+        <name>yarn.node-labels.enabled</name>
+        <value>true</value>
+    </property>
+```
+
+~~刷新~~
+
+```bash
+bin/yarn rmadmin -refreshQueues
+```
+
+3）重启 RM
+
+4）添加 label
+
+```bash
+# 添加
+yarn rmadmin -addToClusterNodeLabels "my_label_test"
+
+# 查看
+[Ace@hadoop102 hadoop]$ yarn cluster --list-node-labels
+21/03/24 18:40:58 INFO client.RMProxy: Connecting to ResourceManager at hadoop103/192.168.87.103:8032
+Node Labels: my_label_test
+```
+
+5）给 node 打 label
+
+```bash
+yarn rmadmin -replaceLabelsOnNode "hadoop102=my_label_test"
+
+# 如果想删除node伤的标签
+yarn rmadmin -replaceLabelsOnNode "hadoop102"
+```
+
+6）将队列与 label 关联
+
+```xml
+# 遵循层级配置
+# 1）root配置
+  <property>
+    <name>yarn.scheduler.capacity.root.accessible-node-labels.my_label_test.capacity</name>
+    <value>100</value>
+  </property>
+
+# 2) 子队列配置（给myqueue队列分配my_label_test的全部资源）
+  <property>
+    <name>yarn.scheduler.capacity.root.myqueue.accessible-node-labels</name>
+    <value>my_label_test</value>
+  </property>
+
+  <property>
+    <name>yarn.scheduler.capacity.root.myqueue.accessible-node-labels.my_label_test.capacity</name>
+    <value>100</value>
+  </property>
+```
+
+```bash
+# 刷新队列
+yarn rmadmin -refreshQueues 
+```
+
+7）查看效果
+
+```bash
+[Ace@hadoop102 hadoop]$ yarn node -list
+21/03/24 18:50:56 INFO client.RMProxy: Connecting to ResourceManager at hadoop103/192.168.87.103:8032
+Total Nodes:3
+         Node-Id	     Node-State	Node-Http-Address	Number-of-Running-Containers
+ hadoop104:44284	        RUNNING	   hadoop104:8042	                           0
+ hadoop103:41733	        RUNNING	   hadoop103:8042	                           0
+ hadoop102:43484	        RUNNING	   hadoop102:8042	                           0
+ 
+ [Ace@hadoop102 hadoop]$ yarn node -status hadoop102:43484
+21/03/24 19:01:17 INFO client.RMProxy: Connecting to ResourceManager at hadoop103/192.168.87.103:8032
+Node Report :
+	Node-Id : hadoop102:43484
+	Rack : /default-rack
+	Node-State : RUNNING
+	Node-Http-Address : hadoop102:8042
+	Last-Health-Update : 星期三 24/三月/21 06:59:23:634CST
+	Health-Report :
+	Containers : 0
+	Memory-Used : 0MB
+	Memory-Capacity : 8192MB
+	CPU-Used : 0 vcores
+	CPU-Capacity : 8 vcores
+	Node-Labels : my_label_test
+```
+
+8）测试
+
+```bash
+hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount -D mapreduce.job.queuename=myqueue -D node_label_expression=my_label_test
+```
+
+#### 3.6.3 添加 Prometheus 监控
+
+##### 3.6.3.1 HDFS 监控
+
+> https://www.jesseyates.com/2019/03/03/hdfs-blocks-missing-vs-corrupt.html
+
+- 配置 `etc/hadoop/hadoop-env.sh`，添加如下内容
+
+```bash
+# add prom
+if [[ $HADOOP_NAMENODE_OPTS != *"javaagent"* ]]; then
+  export HADOOP_NAMENODE_OPTS="$HADOOP_NAMENODE_OPTS -javaagent:/opt/module/hadoop-2.7.2/jmx_prometheus_javaagent-0.13.0.jar=50072:/opt/module/hadoop-2.7.2/namenode.yml"
+fi
+```
+
+- 创建 `${HADOOP_HOME}/namenode.yml`
+
+```yaml
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+whitelistObjectNames: ["Hadoop:*", "java.lang:*"]
+```
+
+- 重启 HDFS（Namenode）
+
+- 查看效果：http://hadoop102:50070/jmx
+
+##### 3.6.3.2 Yarn 监控
+
+- 配置 `etc/hadoop/hadoop-env.sh`，添加如下内容
+
+```bash
+# add prom
+export YARN_RESOURCEMANAGER_OPTS="$YARN_RESOURCEMANAGER_OPTS -javaagent:/opt/module/hadoop-2.7.2/jmx_prometheus_javaagent-0.13.0.jar=3333:/opt/module/hadoop-2.7.2/resourcemanager.yml"
+```
+
+- 创建 `${HADOOP_HOME}/capacity-scheduler.xml`（这里面有啥区别？？）
+
+```yaml
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+whitelistObjectNames: ["Hadoop:*", "java.lang:*"]
+```
+
+- 重启 Resource Manager
+- 查看效果：http://hadoop104:8042/jmx
+
+可能有用的参数：
+
+```
+{
+    "name" : "Hadoop:service=NodeManager,name=JvmMetrics",
+    "modelerType" : "JvmMetrics",
+    "tag.Context" : "jvm",
+    "tag.ProcessName" : "NodeManager",
+    "tag.SessionId" : null,
+    "tag.Hostname" : "hadoop104",
+    "MemNonHeapUsedM" : 44.3864,
+    "MemNonHeapCommittedM" : 46.5625,
+    "MemNonHeapMaxM" : -9.536743E-7,
+    "MemHeapUsedM" : 63.65235,
+    "MemHeapCommittedM" : 160.5,
+    "MemHeapMaxM" : 889.0,
+    "MemMaxM" : 889.0,
+    "GcCount" : 12,
+    "GcTimeMillis" : 1053,
+    "ThreadsNew" : 0,
+    "ThreadsRunnable" : 15,
+    "ThreadsBlocked" : 0,
+    "ThreadsWaiting" : 9,
+    "ThreadsTimedWaiting" : 39,
+    "ThreadsTerminated" : 0,
+    "LogFatal" : 0,
+    "LogError" : 0,
+    "LogWarn" : 1,
+    "LogInfo" : 65
+  }
+```
 
 ## 四、Zookeeper 配置
 
