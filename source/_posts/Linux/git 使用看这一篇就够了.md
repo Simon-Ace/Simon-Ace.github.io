@@ -45,7 +45,7 @@ git merge A
 
 - 删除某次 commit
 
-##### 1. git reset
+### 3.1 git reset
 
 - `git reset` ：回滚到某次提交。
 - `git reset --soft`：此次提交之后的修改会被退回到暂存区。
@@ -57,3 +57,14 @@ git reset --hard commit_id // HEAD 就会指向此次的提交记录
 git push origin HEAD --force // 强制推送到远端
 ```
 
+### 3.2 rebase
+
+- 修改之前的commit信息（只允许在推到远程之前做）
+
+```bash
+git rebase -i <要改的commit 之前的一次commit id>
+```
+
+【原理】
+
+在要做变基的节点上，创建出了新的一条支，然后在新的这个支上作修改。

@@ -625,13 +625,12 @@ smo	1
 [hadoop102]$ start-dfs.sh
 [hadoop103]$ start-yarn.sh
 [hadoop104]$ mr-jobhistory-daemon.sh start historyserver
-$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount /wcinput /output1
+$ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount /wcinput /output/xxx
 ```
 
 - 查看
   - 打开 yarn web http://hadoop103:8088/
   - 打开 history，再点 log 就能看到任务具体的日志信息了
-  - ![image-20201008173041985](../../../../../Library/Application Support/typora-user-images/image-20201008173041985.png)
 
 #### 3.3.5 集群时间同步
 
@@ -809,7 +808,7 @@ hadoop fs -mkdir /node-labels-conf
 ```
 
 2）配置yarn-site.xml ，增加
-```bash
+```xml
     <!--开启node label -->
     <property>
         <name>yarn.node-labels.fs-store.root-dir</name>
@@ -820,6 +819,11 @@ hadoop fs -mkdir /node-labels-conf
         <name>yarn.node-labels.enabled</name>
         <value>true</value>
     </property>
+    <!--????????  在 hadoop2.8.2 版本之前需要配置yarn.node-labels.configuration-type配置项。-->
+    <property>
+        <name>yarn.node-labels.configuration-type</name>
+   		  <value>centralized or delegated-centralized or distributed</value>
+		</property>
 ```
 
 ~~刷新~~
@@ -862,6 +866,7 @@ yarn rmadmin -replaceLabelsOnNode "hadoop102"
   </property>
 
 # 2) 子队列配置（给myqueue队列分配my_label_test的全部资源）
+# 如果不指定此字段，则将从其父字段继承。 ?????????
   <property>
     <name>yarn.scheduler.capacity.root.myqueue.accessible-node-labels</name>
     <value>my_label_test</value>
@@ -871,6 +876,9 @@ yarn rmadmin -replaceLabelsOnNode "hadoop102"
     <name>yarn.scheduler.capacity.root.myqueue.accessible-node-labels.my_label_test.capacity</name>
     <value>100</value>
   </property>
+
+# 当资源请求未指定节点标签时，应用将被提交到该值对应的分区。默认情况下，该值为空，即应用程序将被分配没有标签的节点上的容器。
+yarn.scheduler.capacity.<queue-path>.default-node-label-expression
 ```
 
 ```bash
@@ -909,8 +917,16 @@ Node Report :
 8）测试
 
 ```bash
-hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount -D mapreduce.job.queuename=myqueue -D node_label_expression=my_label_test
+hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount -D mapreduce.job.queuename=myqueue -D node_label_expression=my_label_test /wcinput /output/xxx
 ```
+
+**2.7.2 版本有超多bug & 不完善**
+
+a) 设置队列后 web ui 没有分组显示
+
+b) 为了能在指定 label node 上运行，需要把默认队列的 capacity 和 max-capacity 都设为0。但是这样会导致只能起一个 AM（一个 job）
+
+> [介绍label稳定版和非稳定版区别，以及自己开发的Yarn资源监控](https://dbaplus.cn/news-73-1900-1.html)
 
 #### 3.6.3 添加 Prometheus 监控
 
@@ -922,8 +938,9 @@ hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount 
 
 ```bash
 # add prom
+# if 是必要的防止多次source 这个文件，导致端口被重复注册的问题（会无法启动namenode）
 if [[ $HADOOP_NAMENODE_OPTS != *"javaagent"* ]]; then
-  export HADOOP_NAMENODE_OPTS="$HADOOP_NAMENODE_OPTS -javaagent:/opt/module/hadoop-2.7.2/jmx_prometheus_javaagent-0.13.0.jar=50072:/opt/module/hadoop-2.7.2/namenode.yml"
+  export HADOOP_NAMENODE_OPTS="$HADOOP_NAMENODE_OPTS -javaagent:/opt/module/hadoop-2.7.2/jmx_prometheus_javaagent-0.13.0.jar=9300:/opt/module/hadoop-2.7.2/namenode.yml"
 fi
 ```
 
@@ -937,7 +954,7 @@ whitelistObjectNames: ["Hadoop:*", "java.lang:*"]
 
 - 重启 HDFS（Namenode）
 
-- 查看效果：http://hadoop102:50070/jmx
+- 查看效果：http://hadoop102:9300
 
 ##### 3.6.3.2 Yarn 监控
 
@@ -962,34 +979,63 @@ whitelistObjectNames: ["Hadoop:*", "java.lang:*"]
 可能有用的参数：
 
 ```
-{
-    "name" : "Hadoop:service=NodeManager,name=JvmMetrics",
-    "modelerType" : "JvmMetrics",
-    "tag.Context" : "jvm",
-    "tag.ProcessName" : "NodeManager",
-    "tag.SessionId" : null,
-    "tag.Hostname" : "hadoop104",
-    "MemNonHeapUsedM" : 44.3864,
-    "MemNonHeapCommittedM" : 46.5625,
-    "MemNonHeapMaxM" : -9.536743E-7,
-    "MemHeapUsedM" : 63.65235,
-    "MemHeapCommittedM" : 160.5,
-    "MemHeapMaxM" : 889.0,
-    "MemMaxM" : 889.0,
-    "GcCount" : 12,
-    "GcTimeMillis" : 1053,
-    "ThreadsNew" : 0,
-    "ThreadsRunnable" : 15,
-    "ThreadsBlocked" : 0,
-    "ThreadsWaiting" : 9,
-    "ThreadsTimedWaiting" : 39,
-    "ThreadsTerminated" : 0,
-    "LogFatal" : 0,
-    "LogError" : 0,
-    "LogWarn" : 1,
-    "LogInfo" : 65
-  }
+  }, {
+    "name" : "Hadoop:service=NodeManager,name=NodeManagerMetrics",
+    "modelerType" : "NodeManagerMetrics",
+    "tag.Context" : "yarn",
+    "tag.Hostname" : "hadoop103",
+    "ContainersLaunched" : 15,
+    "ContainersCompleted" : 1,
+    "ContainersFailed" : 0,
+    "ContainersKilled" : 11,
+    "ContainersIniting" : 0,
+    "ContainersRunning" : 3,
+    "AllocatedGB" : 4,
+    "AllocatedContainers" : 3,
+    "AvailableGB" : 4,
+    "AllocatedVCores" : 3,
+    "AvailableVCores" : 5,
+    "ContainerLaunchDurationNumOps" : 15,
+    "ContainerLaunchDurationAvgTime" : 408.33333333333337
+  }, {
 ```
+
+==看到的内存比实际的多？==
+
+```
+# HELP hadoop_nodemanager_availablegb AvailableGB (Hadoop<service=NodeManager, name=NodeManagerMetrics><>AvailableGB)
+# TYPE hadoop_nodemanager_availablegb untyped
+hadoop_nodemanager_availablegb{name="NodeManagerMetrics",} 8.0
+
+# HELP hadoop_nodemanager_allocatedgb Current allocated memory in GB (Hadoop<service=NodeManager, name=NodeManagerMetrics><>AllocatedGB)
+# TYPE hadoop_nodemanager_allocatedgb untyped
+hadoop_nodemanager_allocatedgb{name="NodeManagerMetrics",} 0.0
+```
+
+### 3.7 升级 Yarn
+
+#### 3.7.1 升级版本到 2.8.5
+
+需要修改的文件
+
+- `yarn-env.sh`
+- `yarn-site.xml`
+- `slaves`
+- `core-site.xml`
+- `hadoop-env.sh`
+- `hdfs-site.xml`
+
+测试能否只升级 RM，不升级 NM（可以）
+
+> [hadoop各版本特性](https://blog.csdn.net/qq_16038125/article/details/103177181)
+>
+> [Hadoop2.7.6 滚动升级Hadoop2.8.5](http://www.bianqi.info/2018/10/hadoop-rollupdate/)
+>
+> [大数据的yarn类型系统分析与云储存](https://www.huaweicloud.com/articles/88a17b2e42fafc98bf9a50b7d1175d3a.html)
+>
+> [小米Hadoop YARN平滑升级3.1实践](https://mp.weixin.qq.com/s/3i0swPCcFplqJW12CNV57g)
+>
+> [Hadoop 2.7 不停服升级到 3.2 在滴滴的实践](https://blog.csdn.net/wypblog/article/details/103849721)
 
 ## 四、Zookeeper 配置
 
