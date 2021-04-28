@@ -1012,6 +1012,32 @@ hadoop_nodemanager_availablegb{name="NodeManagerMetrics",} 8.0
 hadoop_nodemanager_allocatedgb{name="NodeManagerMetrics",} 0.0
 ```
 
+**更细粒度监控**
+
+可以通过这个地址看到 json / xml 格式的监控信息
+
+```
+http://<rm http address:port>/ws/v1/cluster/scheduler
+```
+
+#### 3.6.4 NM 内存容量动态更新
+
+> [NM内存配置参数推荐](https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.5/bk_command-line-installation/content/determine-hdp-memory-config.html)
+>
+> [YARN的Memory和CPU调优配置详解](https://www.huaweicloud.com/articles/4c9feebe11ae7f2d2d448a53292db16d.html)
+>
+> [yarn集群上内存和cpu调优和设置](https://my.oschina.net/cjun/blog/688827)
+
+#### 3.6.5 hdfs balancer
+
+> [Increasing HDFS Balancer Performance](https://www.expecc.com/post/increasing-hdfs-balancer-performance)
+>
+> [HDFS Administration - cloudera](https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.0/bk_hdfs-administration/content/configuring_balancer.html)
+>
+> [HDFS Balancers - cloudera](https://docs.cloudera.com/documentation/enterprise/5-7-x/topics/admin_hdfs_balancer.html#xd_583c10bfdbd326ba--6eed2fb8-14349d04bee--780a)
+>
+> [HDFS balance策略详解](https://www.jianshu.com/p/f7c1cd476601)
+
 ### 3.7 升级 Yarn
 
 #### 3.7.1 升级版本到 2.8.5
