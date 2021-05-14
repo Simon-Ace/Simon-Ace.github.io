@@ -1038,6 +1038,51 @@ http://<rm http address:port>/ws/v1/cluster/scheduler
 >
 > [HDFS balance策略详解](https://www.jianshu.com/p/f7c1cd476601)
 
+#### 3.6.6 Nodemanager 重启恢复
+
+> [YARN NodeManager Restart 特性](https://blog.csdn.net/CPP_MAYIBO/article/details/102638897)
+>
+> [配置YARN集群重启时的作业自动恢复](https://blog.csdn.net/nazeniwaresakini/article/details/106712757)
+
+## Enabling NM Restart
+
+Step 1. To enable NM Restart functionality, set the following property in **conf/yarn-site.xml** to *true*.
+
+| Property                            | Value                                   |
+| :---------------------------------- | :-------------------------------------- |
+| `yarn.nodemanager.recovery.enabled` | `true`, (default value is set to false) |
+
+Step 2. Configure a path to the local file-system directory where the NodeManager can save its run state.(本地文件目录)
+
+| Property                        | Description                                                  |
+| :------------------------------ | :----------------------------------------------------------- |
+| `yarn.nodemanager.recovery.dir` | The local filesystem directory in which the node manager will store state when recovery is enabled. The default value is set to `$hadoop.tmp.dir/yarn-nm-recovery`. |
+
+Step 3. Configure a valid RPC address for the NodeManager.
+
+| Property                   | Description                                                  |
+| :------------------------- | :----------------------------------------------------------- |
+| `yarn.nodemanager.address` | Ephemeral ports (port 0, which is default) cannot be used for the NodeManager’s RPC server specified via yarn.nodemanager.address as it can make NM use different ports before and after a restart. This will break any previously running clients that were communicating with the NM before restart. Explicitly setting yarn.nodemanager.address to an address with specific port number (for e.g 0.0.0.0:45454) is a precondition for enabling NM restart. |
+
+```xml
+        <!-- Yarn Restart -->
+        <property>
+                <name>yarn.nodemanager.recovery.enabled</name>
+                <value>true</value>
+        </property>
+        <property>
+                <name>yarn.nodemanager.recovery.dir</name>
+                <value>/data1/eadop/hadoop-tmp</value>
+                <!-- 会在最后自动添加 yarn-nm-recovery -->
+        </property>
+        <property>
+                <name>yarn.nodemanager.address</name>
+                <value>0.0.0.0:45454</value>
+        </property>
+```
+
+
+
 ### 3.7 升级 Yarn
 
 #### 3.7.1 升级版本到 2.8.5
@@ -1062,6 +1107,58 @@ http://<rm http address:port>/ws/v1/cluster/scheduler
 > [小米Hadoop YARN平滑升级3.1实践](https://mp.weixin.qq.com/s/3i0swPCcFplqJW12CNV57g)
 >
 > [Hadoop 2.7 不停服升级到 3.2 在滴滴的实践](https://blog.csdn.net/wypblog/article/details/103849721)
+
+### 3.8 Hadoop 进阶命令使用
+
+集群间数据平衡：
+
+```
+> nohup hdfs balancer -D "dfs.balancer.movedWinWidth=300000000"  -D "dfs.datanode.balance.bandwidthPerSec=2000m" -threshold 1 > hadoop-hadoop-balancer-hadoop-0018.log &
+```
+
+节点内各个磁盘的数据平衡：
+
+```
+> hdfs diskbalancer -plan IP -bandwidth 1000 -v 2> /dev/null | egrep ^/ | xargs hdfs diskbalancer -execute
+```
+
+接上，查看磁盘平衡情况/进度：
+
+```
+> hdfs diskbalancer -query IP
+```
+
+YARN资源置空(这里多说一下，资源置空我们在生产环境是有些情况需要把这个node下线，但是此时此刻正有任务在运行，资源置空之后，UI上面会显示这个资源是负值，等正在运行的任务运行完成之后就不会再提交到这个node上了，就可以下线了)
+
+- 注意这个PORT是UI页面上的Node Address，不是Node HTTP Address
+
+```
+> yarn rmadmin -updateNodeResource IP:PORT 0 0
+```
+
+HDFS高可用Namenode主从切换：
+
+- nn1,nn2这两个是你集群配置文件配置高可用时指定的别名，需要用你自己的
+
+```
+> hdfs haadmin -failover nn2 nn1
+```
+
+HDFS退出安全模式
+
+```
+> hadoop dfsadmin -safemode leave
+```
+
+HDFS动态生效datanode/namenode配置：
+
+- status:查看动态生效配置状态
+- start:执行动态生效配置动作
+- properties:查看修改了哪些配置与正在运行的不一样
+
+```
+> hdfs dfsadmin -reconfig datanode IP:PORT status|start|properties
+```
 
 ## 四、Zookeeper 配置
 
