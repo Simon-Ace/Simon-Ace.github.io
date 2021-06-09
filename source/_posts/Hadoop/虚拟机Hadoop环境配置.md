@@ -851,7 +851,7 @@ Node Labels: my_label_test
 ```bash
 yarn rmadmin -replaceLabelsOnNode "hadoop102=my_label_test"
 
-# 如果想删除node伤的标签
+# 如果想删除node上的标签
 yarn rmadmin -replaceLabelsOnNode "hadoop102"
 ```
 
@@ -1027,6 +1027,16 @@ http://<rm http address:port>/ws/v1/cluster/scheduler
 > [YARN的Memory和CPU调优配置详解](https://www.huaweicloud.com/articles/4c9feebe11ae7f2d2d448a53292db16d.html)
 >
 > [yarn集群上内存和cpu调优和设置](https://my.oschina.net/cjun/blog/688827)
+>
+> [YARN NodeManager 动态更新资源配置参数](http://mdba.cn/2018/08/31/1352/)
+>
+> [Yarn patch](https://issues.apache.org/jira/browse/YARN-313)
+>
+> [User capacity has reached its maximum limit（用户容量已达到最大限制）](https://www.cnblogs.com/yy3b2007com/p/11275052.html)
+
+```bash
+yarn rmadmin -updateNodeResource ${HOSTNAME}:45454  53248 28
+```
 
 #### 3.6.5 hdfs balancer
 
@@ -1044,7 +1054,7 @@ http://<rm http address:port>/ws/v1/cluster/scheduler
 >
 > [配置YARN集群重启时的作业自动恢复](https://blog.csdn.net/nazeniwaresakini/article/details/106712757)
 
-## Enabling NM Restart
+Enabling NM Restart
 
 Step 1. To enable NM Restart functionality, set the following property in **conf/yarn-site.xml** to *true*.
 
@@ -1081,7 +1091,29 @@ Step 3. Configure a valid RPC address for the NodeManager.
         </property>
 ```
 
+需要手动创建这个文件夹：
 
+```bash
+mkdir /data1/eadop/hadoop-tmp/yarn-nm-state
+# chown 需要改权限
+```
+
+其他服务：
+
+```
+org.apache.hadoop.service.ServiceStateException: org.fusesource.leveldbjni.internal.NativeDB$DBException: IO error: /data1/eadop/hadoop-tmp/nm-aux-services/mapreduce_shuffle/mapreduce_shuffle_state/LOCK: No such file or directory
+        at org.apache.hadoop.service.ServiceStateException.convert(ServiceStateException.java:59)
+        at org.apache.hadoop.service.AbstractService.start(AbstractService.java:204)
+        at org.apache.hadoop.yarn.server.nodemanager.containermanager.AuxServices.serviceStart(AuxServices.java:159)
+        at org.apache.hadoop.service.AbstractService.start(AbstractService.java:193)
+        at org.apache.hadoop.service.CompositeService.serviceStart(CompositeService.java:120)
+        at org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl.serviceStart(ContainerManagerImpl.java:463)
+```
+
+```bash
+mkdir nm-aux-services
+chown yarn:yarn nm-aux-services
+```
 
 ### 3.7 升级 Yarn
 
