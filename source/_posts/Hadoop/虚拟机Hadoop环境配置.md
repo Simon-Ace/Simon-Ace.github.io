@@ -844,6 +844,9 @@ yarn rmadmin -addToClusterNodeLabels "my_label_test"
 [Ace@hadoop102 hadoop]$ yarn cluster --list-node-labels
 21/03/24 18:40:58 INFO client.RMProxy: Connecting to ResourceManager at hadoop103/192.168.87.103:8032
 Node Labels: my_label_test
+
+# 删除label
+yarn rmadmin -removeFromClusterNodeLabels "my_label_test"
 ```
 
 5）给 node 打 label
@@ -927,6 +930,20 @@ a) 设置队列后 web ui 没有分组显示
 b) 为了能在指定 label node 上运行，需要把默认队列的 capacity 和 max-capacity 都设为0。但是这样会导致只能起一个 AM（一个 job）
 
 > [介绍label稳定版和非稳定版区别，以及自己开发的Yarn资源监控](https://dbaplus.cn/news-73-1900-1.html)
+
+##### 共享label
+
+> [YARN Node Labels DOC](https://hadoop.apache.org/docs/r2.8.5/hadoop-yarn/hadoop-yarn-site/NodeLabel.html)
+>
+> - There are two kinds of node partitions:
+>   - Exclusive: containers will be allocated to nodes with exactly match node partition. (e.g. asking partition=“x” will be allocated to node with partition=“x”, asking DEFAULT partition will be allocated to DEFAULT partition nodes).
+>   - Non-exclusive: if a partition is non-exclusive, it shares idle resource to container requesting DEFAULT partition.
+
+```bash
+yarn rmadmin -addToClusterNodeLabels "label_1(exclusive=true/false)"
+```
+
+
 
 #### 3.6.3 添加 Prometheus 监控
 
@@ -1115,6 +1132,28 @@ mkdir nm-aux-services
 chown yarn:yarn nm-aux-services
 ```
 
+#### 3.6.7 使用同一份keytab
+
+改yarn-site.xml配置
+
+```xml
+    <property>
+        <name>yarn.nodemanager.keytab</name>
+        <value>/keytabs/yarn_analysis.keytab</value>   <!-- path to the YARN keytab -->
+    </property>
+    <property>
+        <name>yarn.nodemanager.principal</name>
+        <value>yarn/analysis@YOUDAO.163.COM</value>
+    </property>
+
+<property>
+    <name>yarn.resourcemanager.principal.pattern</name>
+    <value>*</value>
+</property>
+```
+
+其他：还以把一堆keytab合并？里面有很多的principal
+
 ### 3.7 升级 Yarn
 
 #### 3.7.1 升级版本到 2.8.5
@@ -1191,6 +1230,10 @@ HDFS动态生效datanode/namenode配置：
 ```
 > hdfs dfsadmin -reconfig datanode IP:PORT status|start|properties
 ```
+
+### 3.# 技术文章
+
+> [美团点评数据平台融合实践](https://wenku.baidu.com/view/317a2874cd1755270722192e453610661ed95aa7.html?re=view)
 
 ## 四、Zookeeper 配置
 
