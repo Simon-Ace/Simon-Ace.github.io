@@ -1231,6 +1231,10 @@ HDFS动态生效datanode/namenode配置：
 > hdfs dfsadmin -reconfig datanode IP:PORT status|start|properties
 ```
 
+### 3.9 监控
+
+> https://juejin.cn/post/6844903893080473614  参考CDH监控
+
 ### 3.# 技术文章
 
 > [美团点评数据平台融合实践](https://wenku.baidu.com/view/317a2874cd1755270722192e453610661ed95aa7.html?re=view)
@@ -1804,6 +1808,41 @@ spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log
 ### 6.5 WordCount 程序
 
 略
+
+### 6.6 pyspark 读取文件
+
+```python
+./bin/pyspark
+
+# 读取本地文件
+>>> textFile = sc.textFile('file:///opt/others/sparkvar.txt')
+>>> textFile.first()
+
+# 读取hdfs文件
+>>> textFile = sc.textFile("hdfs://hadoop102:9000/wcinput/hhh.txt")
+>>> textFile.first()
+```
+
+python 程序
+
+```python
+#!/usr/bin/env python
+# coding: utf-8
+
+from pyspark import SparkContext, SparkConf
+from pyspark.sql import SparkSession,HiveContext
+
+sc = SparkContext('yarn', 'generate_id')
+sc.setLogLevel('WARN')
+spark_session = SparkSession.builder.getOrCreate()
+spark_session.conf.set("spark.sql.execution.arrow.enabled", "true")
+
+# 读取文件
+textFile = sc.textFile("hdfs://hadoop102:9000/wcinput/hhh.txt")
+textFile.first()
+```
+
+
 
 ## 七、Hive 配置
 
