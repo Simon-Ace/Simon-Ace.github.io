@@ -313,6 +313,21 @@
         <a id="more"></a>
 
 <p>OLAP(OnLine Analysis Processing ，联机分析处理 ) </p>
+<p>直接给出结论：</p>
+<ul>
+<li>Hive、Hawq、Impala：基于 SQL on Hadoop</li>
+<li>Presto 和 Spark SQL 类似：基于内存解析 SQL 生成执行计划</li>
+<li>Kylin：用空间换时间、预计算</li>
+<li>Druid：数据实时摄入加实时计算</li>
+<li>ClickHouse：OLAP 领域的 HBase，单表查询性能优势巨大</li>
+<li>Greenpulm：OLAP 领域的 PostgreSQL</li>
+</ul>
+<p>如果你的场景是基于 HDFS 的离线计算任务，那么 Hive、Hawq 和 Imapla 就是你的调研目标。</p>
+<p>如果你的场景解决分布式查询问题，有一定的实时性要求，那么 Presto 和 SparkSQL 可能更符合你的期望。</p>
+<p>如果你的汇总维度比较固定，实时性要求较高，可以通过用户配置的维度 + 指标进行预计算，那么不妨尝试 Kylin 和 Druid。</p>
+<p>ClickHouse 则在单表查询性能上独领风骚，远超过其他的 OLAP 数据库。</p>
+<p>Greenpulm 作为关系型数据库产品，性能可以随着集群的扩展线性增长，更加适合进行数据分析。</p>
+<p>参考：</p>
 <blockquote>
 <p><a href="https://mp.weixin.qq.com/s?src=11&timestamp=1623913265&ver=3135&signature=bAEiyYY0oioz9ZX5vVJW4lb0TXd5PkgKlQk7ODVzgRHSukwBgU8RFaelItgjETjUS0Hof7WebyikerbFatUTMP1UeKm5UrJPbkLtHWYhPPkHte1gwbsy5q4Ukm-zHoEW&new=1" target="_blank" rel="noopener">你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(上)</a></p>
 <p><a href="https://mp.weixin.qq.com/s?src=11&timestamp=1623913265&ver=3135&signature=bAEiyYY0oioz9ZX5vVJW4lb0TXd5PkgKlQk7ODVzgRFui8AeZFx1Xxib4X55W7e-5y4CA9WBx6JzdDcAFPV8gZw*Vde4QLaUR1cbhTzMu83dt9W8Vblmt7xiZRkOXRz7&new=1" target="_blank" rel="noopener">你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)</a></p>
@@ -328,7 +343,7 @@
     <div class='new-meta-box'>
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-06-17T15:04:13+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-06-17T15:06:41+08:00">
   <a class='notlink'>
     <i class="fas fa-clock" aria-hidden="true"></i>
     <p>更新于 2021年6月17日</p>
@@ -400,6 +415,25 @@
       
       
           <div class="prev-next">
+              
+                  <section class="prev">
+                      <span class="art-item-left">
+                          <h6><i class="fas fa-chevron-left" aria-hidden="true"></i>&nbsp;上一页</h6>
+                          <h4>
+                              <a href="/2021/06/24/JAVA/Arthas 调试/" rel="prev" title="Arthas 调试">
+                                
+                                    Arthas 调试
+                                
+                              </a>
+                          </h4>
+                          
+                              
+                              <h6 class="tags">
+                                  <a class="tag" href="/tags/Arthas-debug/"><i class="fas fa-tag fa-fw" aria-hidden="true"></i> Arthas, debug</a>
+                              </h6>
+                          
+                      </span>
+                  </section>
               
               
                   <section class="next">
@@ -639,7 +673,7 @@
         
           <li><a class="flat-box" title="/categories/大数据/" href="/categories/大数据/"><div class='name'>大数据</div><div class='badge'>(1)</div></a></li>
         
-          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(16)</div></a></li>
+          <li><a class="flat-box" title="/categories/技术/" href="/categories/技术/"><div class='name'>技术</div><div class='badge'>(21)</div></a></li>
         
           <li><a class="flat-box" title="/categories/教程/" href="/categories/教程/"><div class='name'>教程</div><div class='badge'>(26)</div></a></li>
         
@@ -695,7 +729,7 @@
 </header>
 
     <div class='content pure'>
-      <a href="/tags/Flink/" style="font-size: 14px; color: #999">Flink</a> <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 21.5px; color: #666">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Java/" style="font-size: 14px; color: #999">Java</a> <a href="/tags/Java-RPC/" style="font-size: 14px; color: #999">Java, RPC</a> <a href="/tags/Java-注解-反射/" style="font-size: 14px; color: #999">Java, 注解, 反射</a> <a href="/tags/Java-线程/" style="font-size: 14px; color: #999">Java, 线程</a> <a href="/tags/Linux/" style="font-size: 21.5px; color: #666">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 21.5px; color: #666">Linux, 压缩</a> <a href="/tags/OLAP-数据库/" style="font-size: 14px; color: #999">OLAP, 数据库</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16.5px; color: #888">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/prometheus/" style="font-size: 14px; color: #999">prometheus</a> <a href="/tags/python/" style="font-size: 14px; color: #999">python</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/vue/" style="font-size: 14px; color: #999">vue</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/依赖/" style="font-size: 14px; color: #999">依赖</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 19px; color: #777">数仓</a> <a href="/tags/模板/" style="font-size: 16.5px; color: #888">模板</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
+      <a href="/tags/Arthas-debug/" style="font-size: 14px; color: #999">Arthas, debug</a> <a href="/tags/Flink/" style="font-size: 14px; color: #999">Flink</a> <a href="/tags/Hadoop-教程/" style="font-size: 14px; color: #999">Hadoop, 教程</a> <a href="/tags/Hexo/" style="font-size: 20px; color: #707070">Hexo</a> <a href="/tags/JVM/" style="font-size: 14px; color: #999">JVM</a> <a href="/tags/Java/" style="font-size: 14px; color: #999">Java</a> <a href="/tags/Java-RPC/" style="font-size: 14px; color: #999">Java, RPC</a> <a href="/tags/Java-注解-反射/" style="font-size: 14px; color: #999">Java, 注解, 反射</a> <a href="/tags/Java-线程/" style="font-size: 14px; color: #999">Java, 线程</a> <a href="/tags/Linux/" style="font-size: 22px; color: #636363">Linux</a> <a href="/tags/Linux-sed/" style="font-size: 14px; color: #999">Linux, sed</a> <a href="/tags/Linux-压缩/" style="font-size: 20px; color: #707070">Linux, 压缩</a> <a href="/tags/OLAP-数据库/" style="font-size: 14px; color: #999">OLAP, 数据库</a> <a href="/tags/Presto-教程/" style="font-size: 14px; color: #999">Presto, 教程</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Python-异常/" style="font-size: 14px; color: #999">Python, 异常</a> <a href="/tags/Spark-教程/" style="font-size: 14px; color: #999">Spark, 教程</a> <a href="/tags/SpringBoot/" style="font-size: 14px; color: #999">SpringBoot</a> <a href="/tags/SpringBoot-Prometheus/" style="font-size: 14px; color: #999">SpringBoot, Prometheus</a> <a href="/tags/blog/" style="font-size: 14px; color: #999">blog</a> <a href="/tags/code/" style="font-size: 14px; color: #999">code</a> <a href="/tags/cron/" style="font-size: 14px; color: #999">cron</a> <a href="/tags/docker/" style="font-size: 14px; color: #999">docker</a> <a href="/tags/docker-教程/" style="font-size: 14px; color: #999">docker,教程</a> <a href="/tags/git/" style="font-size: 16px; color: #8b8b8b">git</a> <a href="/tags/idea-快捷键/" style="font-size: 14px; color: #999">idea, 快捷键</a> <a href="/tags/prometheus/" style="font-size: 14px; color: #999">prometheus</a> <a href="/tags/python/" style="font-size: 14px; color: #999">python</a> <a href="/tags/shell-linux-教程/" style="font-size: 14px; color: #999">shell, linux, 教程</a> <a href="/tags/vim-教程/" style="font-size: 14px; color: #999">vim, 教程</a> <a href="/tags/vue/" style="font-size: 14px; color: #999">vue</a> <a href="/tags/yum/" style="font-size: 14px; color: #999">yum</a> <a href="/tags/依赖/" style="font-size: 14px; color: #999">依赖</a> <a href="/tags/教程/" style="font-size: 24px; color: #555">教程</a> <a href="/tags/数仓/" style="font-size: 18px; color: #7e7e7e">数仓</a> <a href="/tags/模板/" style="font-size: 18px; color: #7e7e7e">模板</a> <a href="/tags/练习/" style="font-size: 14px; color: #999">练习</a>
     </div>
   </section>
 
