@@ -21,7 +21,7 @@ docker cp <containerId>:/file/path/within/container /host/path/target
 
 
 
-进入容器
+#### 进入容器
 
 `exec` 命令
 
@@ -58,6 +58,56 @@ root@69d137adef7a:/#
 如果从这个 stdin 中 exit，不会导致容器的停止。这就是为什么推荐大家使用 `docker exec` 的原因。
 
 更多参数说明请使用 `docker exec --help` 查看。
+
+
+
+`docker attach`
+
+理解上进入的原来的终端，没有生成新的终端（所以这种情况下，退出容器会导致容器退出）
+
+
+
+#### volume 映射
+
+```bash
+# 前面是宿主机的目录，后面是容器内的目录
+-v /host-dir:/docker-dir
+```
+
+
+
+#### 使用宿主机网络
+
+```bash
+--network host
+```
+
+
+
+#### 容器自动重启
+
+```bash
+--restart=always
+```
+
+
+
+#### 退出但不停止容器
+
+```bash
+Ctrl+P+Q
+```
+
+
+
+#### 替换 `entrypoint.sh`
+
+```bash
+# 替换entrypoint 参考
+docker run -d centos /bin/bash -c "nohup ping -i 1000 www.baidu.com"
+```
+
+
 
 
 

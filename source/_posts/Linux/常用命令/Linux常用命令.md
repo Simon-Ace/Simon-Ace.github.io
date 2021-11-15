@@ -40,3 +40,11 @@ hello world
 find ./ -i "*.java" | tee JavaList | grep Spring
 ```
 
+
+
+**字符串排序**
+
+```bash
+echo "81 4 6 12 3 0" | xargs -n1 | sort -g | xargs
+```
+

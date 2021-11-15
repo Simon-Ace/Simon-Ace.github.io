@@ -1154,9 +1154,9 @@ chown yarn:yarn nm-aux-services
 
 其他：还以把一堆keytab合并？里面有很多的principal
 
-### 3.7 升级 Yarn
+### 3.7 升级 Hadoop
 
-#### 3.7.1 升级版本到 2.8.5
+#### 3.7.1 Yarn 升级版本到 2.8.5
 
 需要修改的文件
 
@@ -1178,6 +1178,12 @@ chown yarn:yarn nm-aux-services
 > [小米Hadoop YARN平滑升级3.1实践](https://mp.weixin.qq.com/s/3i0swPCcFplqJW12CNV57g)
 >
 > [Hadoop 2.7 不停服升级到 3.2 在滴滴的实践](https://blog.csdn.net/wypblog/article/details/103849721)
+
+#### 3.7.2 HDFS 升级 2.10
+
+> [HDFS Rolling Upgrade | hadoop doc](https://hadoop.apache.org/docs/r2.10.0/hadoop-project-dist/hadoop-hdfs/HdfsRollingUpgrade.html)
+>
+> [大规模集群，HDFS如何从2.7滚动升级到3.2](https://cloud.tencent.com/developer/news/578420)
 
 ### 3.8 Hadoop 进阶命令使用
 
