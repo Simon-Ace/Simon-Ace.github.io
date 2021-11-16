@@ -752,6 +752,186 @@ $ sudo ntpdate -u pool.ntp.org
 
 <img src="https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20201110104755190.png" alt="image-20201110104755190" style="zoom: 33%;" />
 
+> [JournalNode 和 Secondary NameNode](https://blog.csdn.net/shalistone/article/details/106340199)
+
+#### 3.5.1 基础组件准备
+
+- zookeeper
+- journal node
+- zkfc
+
+| hadoop102   | hadoop103   | hadoop104   |
+| ----------- | ----------- | ----------- |
+| NameNode    | NameNode    |             |
+| JournalNode | JournalNode | JournalNode |
+| DataNode    | DataNode    | DataNode    |
+| ZK          | ZK          | ZK          |
+| zkfc        | zkfc        |             |
+|             |             |             |
+
+##### 3.5.1.1 zookeeper
+
+见第四章 Zookeeper 配置
+
+#### 3.5.2 升级过程
+
+1）停服
+
+namenode & secondary namenode
+
+2）修改配置
+
+`core-site.xml`
+
+```xml
+		<property>
+			<name>fs.defaultFS</name>
+        	<value>hdfs://mycluster</value>
+		</property>
+
+		<property>
+			<name>ha.zookeeper.quorum</name>
+			<value>hadoop102:2181,hadoop103:2181,hadoop104:2181</value>
+		</property>
+```
+
+`hdfs-site.xml`
+
+```xml
+<configuration>
+	<!-- 完全分布式集群名称 -->
+  <!-- 这个名称如果要改的话，下面所有相关的都要改 -->
+	<property>
+		<name>dfs.nameservices</name>
+		<value>mycluster</value>
+	</property>
+
+	<!-- 集群中NameNode节点都有哪些 -->
+	<property>
+		<name>dfs.ha.namenodes.mycluster</name>
+		<value>nn1,nn2</value>
+	</property>
+
+	<!-- nn1的RPC通信地址 -->
+	<property>
+		<name>dfs.namenode.rpc-address.mycluster.nn1</name>
+		<value>hadoop102:9000</value>
+	</property>
+
+	<!-- nn2的RPC通信地址 -->
+	<property>
+		<name>dfs.namenode.rpc-address.mycluster.nn2</name>
+		<value>hadoop103:9000</value>
+	</property>
+
+	<!-- nn1的http通信地址 -->
+	<property>
+		<name>dfs.namenode.http-address.mycluster.nn1</name>
+		<value>hadoop102:50070</value>
+	</property>
+
+	<!-- nn2的http通信地址 -->
+	<property>
+		<name>dfs.namenode.http-address.mycluster.nn2</name>
+		<value>hadoop103:50070</value>
+	</property>
+
+	<!-- 指定NameNode元数据在JournalNode上的存放位置 -->
+	<property>
+		<name>dfs.namenode.shared.edits.dir</name>
+	<value>qjournal://hadoop102:8485;hadoop103:8485;hadoop104:8485/mycluster</value>
+	</property>
+
+	<!-- 配置隔离机制，即同一时刻只能有一台服务器对外响应 -->
+	<property>
+		<name>dfs.ha.fencing.methods</name>
+		<value>sshfence</value>
+	</property>
+
+	<!-- 使用隔离机制时需要ssh无秘钥登录-->
+	<property>
+		<name>dfs.ha.fencing.ssh.private-key-files</name>
+		<value>/home/ace/.ssh/id_rsa</value>
+	</property>
+
+	<!-- 声明journalnode服务器存储目录-->
+	<property>
+		<name>dfs.journalnode.edits.dir</name>
+		<value>/opt/module/hadoop-2.7.2/data/jn</value>
+	</property>
+
+	<!-- 关闭权限检查-->
+	<property>
+		<name>dfs.permissions.enable</name>
+		<value>false</value>
+	</property>
+
+	<!-- 访问代理类：client，mycluster，active配置失败自动切换实现方式-->
+	<property>
+  		<name>dfs.client.failover.proxy.provider.mycluster</name>
+<value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+	</property>
+  
+  <!-- 自动故障转移 -->
+  <property>
+	  	<name>dfs.ha.automatic-failover.enabled</name>
+			<value>true</value>
+	</property>
+```
+
+创建目录 `/opt/hadoop-2.7.2/data/jn`
+
+3）同步配置到其他节点
+
+4）启动集群
+
+```bash
+# 启动 zookeeper
+
+# 初始化 HA 在 zookeeper 中状态
+bin/hdfs zkfc -formatZK
+
+# 在所有 journal node 节点上启动
+sbin/hadoop-daemon.sh start journalnode
+
+# 所有jn节点格式化 jn 文件夹（从 non-HA 迁移到 HA 需要使用）
+hdfs namenode -initializeSharedEdits 
+
+# 在 nn1 上启动 namenode
+bin/hdfs namenode -format  # 如果是个全新的nn，需要先format
+sbin/hadoop-daemon.sh start namenode
+
+# 在 nn2 上同步 nn1 的元数据信息
+bin/hdfs namenode -bootstrapStandby
+
+# 启动 nn2
+sbin/hadoop-daemon.sh start namenode
+
+# 启动所有 zkfc
+sbin/hadoop-daemon.sh start zkfc
+
+# 启动所有 datanode
+sbin/hadoop-daemons.sh start datanode
+
+# 将 nn1 切换为 active (可以不做)
+bin/hdfs haadmin -transitionToActive nn1
+
+# 查看状态
+bin/hdfs haadmin -getServiceState nn1
+bin/hdfs haadmin -getServiceState nn2
+
+# 停掉 active nn，看另一个能否变为 active
+sbin/hadoop-daemon.sh stop namenode
+# 可以在网页上看状态
+http://hadoop103:50070/dfshealth.html#tab-overview
+
+# 启动 datanode
+```
+
+
+
+
+
 ### 3.6 其他
 
 #### 3.6.1 增加 Yarn 队列
@@ -1179,11 +1359,15 @@ chown yarn:yarn nm-aux-services
 >
 > [Hadoop 2.7 不停服升级到 3.2 在滴滴的实践](https://blog.csdn.net/wypblog/article/details/103849721)
 
-#### 3.7.2 HDFS 升级 2.10
+#### 3.7.2 HDFS 升级 2.10 或 3
 
 > [HDFS Rolling Upgrade | hadoop doc](https://hadoop.apache.org/docs/r2.10.0/hadoop-project-dist/hadoop-hdfs/HdfsRollingUpgrade.html)
 >
 > [大规模集群，HDFS如何从2.7滚动升级到3.2](https://cloud.tencent.com/developer/news/578420)
+>
+> [升级到Hadoop3.2.0的官方说明文档](https://www.jianshu.com/p/67ac9ac9c361)
+>
+> [58同城Hadoop2.6升级3.2实践](https://z.itpub.net/article/detail/83901DC3329A2EB4F4D31A32454EF30D)
 
 ### 3.8 Hadoop 进阶命令使用
 
@@ -1375,6 +1559,8 @@ Mode: leader / follower
 ```
 
 **3、集群脚本**
+
+zk-all.sh
 
 ```bash
 #!/bin/bash
@@ -1814,6 +2000,10 @@ spark.history.fs.logDirectory 		hdfs://hadoop102:9000/spark-job-log
 ### 6.5 WordCount 程序
 
 略
+
+```bash
+bin/spark-submit --class org.apache.spark.examples.SparkPi --master yarn --deploy-mode client ./examples/jars/spark-examples_2.11-2.3.2.jar 100
+```
 
 ### 6.6 pyspark 读取文件
 
