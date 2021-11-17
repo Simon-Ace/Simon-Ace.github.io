@@ -1369,6 +1369,145 @@ chown yarn:yarn nm-aux-services
 >
 > [58同城Hadoop2.6升级3.2实践](https://z.itpub.net/article/detail/83901DC3329A2EB4F4D31A32454EF30D)
 
+##### 3.7.2.1 HDFS 升级2.8.2
+
+> https://hadoop.apache.org/docs/r2.8.2/hadoop-project-dist/hadoop-hdfs/HdfsRollingUpgrade.html
+>
+> [Apache Hadoop进行版本升级的操作 2.4->2.8](https://blog.csdn.net/zxln007/article/details/80147829)
+
+- **Rolling upgrade**: datanode, namenode , journalnode 可以分别升级
+- jornalnode, zookeeper 很稳定，大多数HDFS升级情况下，JN和ZK都不需要升级
+
+**操作步骤：**
+
+1）准备回滚副本
+
+```bash
+# 准备回滚（rollback）fsimage
+#【每个 NN 上都要执行，否则后面rollingUpgrade时，会报 fsimage 找不到？存疑】
+hdfs dfsadmin -rollingUpgrade prepare
+#---
+PREPARE rolling upgrade ...
+Preparing for upgrade. Data is being saved for rollback.
+Run "dfsadmin -rollingUpgrade query" to check the status
+for proceeding with rolling upgrade
+  Block Pool ID: BP-1814274336-192.168.87.102-1601137241357
+     Start Time: Tue Nov 16 19:08:13 CST 2021 (=1637060893370)
+  Finalize Time: <NOT FINALIZED>
+#---
+
+# 查看回滚 fsimage 状态
+hdfs dfsadmin -rollingUpgrade query
+# 和上面会打印相同的内容
+```
+
+*hadoop.tmp.dir 在虚拟机中放在了2.7.2文件夹下，就不迁移了（这里面有nn 元信息）*
+
+2）升级 Namenode
+
+```bash
+# NN2 停服 & 升级
+hadoop-daemon.sh stop namenode
+
+# 启动新版本 NN2（这条命令貌似是个前台服务，运行了很久还以为在执行什么，实际已经启动了）
+hdfs namenode -rollingUpgrade started
+hdfs namenode -rollingUpgrade <downgrade|rollback|started>
+
+# 将active切换到 NN2
+hdfs haadmin -failover -forceactive namenode2 # 不推荐，直接把 NN1 kill 就行
+
+# NN1 停服 & 升级（active 切换到 NN2）
+hadoop-daemon.sh stop namenode
+
+# 启动新版本 NN1
+hdfs namenode -rollingUpgrade started
+# NN1 这里直接用 start namenode 启动的，看起来和 rollingUpgrade started 也没啥区别？
+sbin/hadoop-daemon.sh start namenode
+```
+
+![image-20211117123547023](https://raw.githubusercontent.com/shuopic/ImgBed/master/NoteImgs/image-20211117123547023.png)
+
+3）升级 datanode
+
+```bash
+# 2.7.2 停掉datanode
+sbin/hadoop-daemon.sh stop datanode
+
+# 2.8.2 启动 datanode
+sbin/hadoop-daemon.sh start datanode
+```
+
+```
+2021-11-16 20:28:38,726 INFO org.apache.hadoop.hdfs.server.common.Storage: Using 1 threads to upgrade data directories (dfs.datanode.parallel.volumes.load.threads.num=1, dataDirs=1)
+2021-11-16 20:28:38,736 INFO org.apache.hadoop.hdfs.server.common.Storage: Lock on /opt/module/hadoop-2.7.2/data/tmp/dfs/data/in_use.lock acquired by nodename 44483@hadoop103
+2021-11-16 20:28:38,741 INFO org.apache.hadoop.hdfs.server.common.Storage: Updating layout version from -56 to -57 for storage /opt/module/hadoop-2.7.2/data/tmp/dfs/data
+2021-11-16 20:28:38,866 INFO org.apache.hadoop.hdfs.server.common.Storage: Analyzing storage directories for bpid BP-1814274336-192.168.87.102-1601137241357
+2021-11-16 20:28:38,867 INFO org.apache.hadoop.hdfs.server.common.Storage: Locking is disabled for /opt/module/hadoop-2.7.2/data/tmp/dfs/data/current/BP-1814274336-192.168.87.102-1601137241357
+2021-11-16 20:28:38,869 INFO org.apache.hadoop.hdfs.server.common.Storage: Restored 0 block files from trash before the layout upgrade. These blocks will be moved to the previous directory during the upgrade
+2021-11-16 20:28:38,869 INFO org.apache.hadoop.hdfs.server.common.Storage: Upgrading block pool storage directory /opt/module/hadoop-2.7.2/data/tmp/dfs/data/current/BP-1814274336-192.168.87.102-1601137241357.
+   old LV = -56; old CTime = 0.
+   new LV = -57; new CTime = 0
+```
+
+这时候如果把 2.8.2 datanode 停了，返回 2.7.2 启动
+
+会出现下面的问题
+
+**目录结构已经变了，不能启动**
+
+```
+2021-11-16 20:36:54,428 WARN org.apache.hadoop.hdfs.server.common.Storage: org.apache.hadoop.hdfs.server.common.IncorrectVersionException: Unexpected version of storage directory /opt/module/hadoop-2.7.2/data/tmp/dfs/data. Reported: -57. Expecting = -56.
+2021-11-16 20:36:54,430 INFO org.apache.hadoop.hdfs.server.common.Storage: Lock on /opt/module/hadoop-2.7.2/data/tmp/dfs/data/in_use.lock acquired by nodename 44720@hadoop103
+2021-11-16 20:36:54,431 WARN org.apache.hadoop.hdfs.server.common.Storage: org.apache.hadoop.hdfs.server.common.IncorrectVersionException: Unexpected version of storage directory /opt/module/hadoop-2.7.2/data/tmp/dfs/data. Reported: -57. Expecting = -56.
+2021-11-16 20:36:54,432 FATAL org.apache.hadoop.hdfs.server.datanode.DataNode: Initialization failed for Block pool <registering> (Datanode Uuid unassigned) service to hadoop103/192.168.87.103:9000. Exiting.
+java.io.IOException: All specified directories are failed to load.
+	at org.apache.hadoop.hdfs.server.datanode.DataStorage.recoverTransitionRead(DataStorage.java:478)
+	at org.apache.hadoop.hdfs.server.datanode.DataNode.initStorage(DataNode.java:1358)
+	at org.apache.hadoop.hdfs.server.datanode.DataNode.initBlockPool(DataNode.java:1323)
+	at org.apache.hadoop.hdfs.server.datanode.BPOfferService.verifyAndSetNamespaceInfo(BPOfferService.java:317)
+	at org.apache.hadoop.hdfs.server.datanode.BPServiceActor.connectToNNAndHandshake(BPServiceActor.java:223)
+	at org.apache.hadoop.hdfs.server.datanode.BPServiceActor.run(BPServiceActor.java:802)
+	at java.lang.Thread.run(Thread.java:748)
+2021-11-16 20:36:54,435 WARN org.apache.hadoop.hdfs.server.datanode.DataNode: Ending block pool service for: Block pool <registering> (Datanode Uuid unassigned) service to hadoop103/192.168.87.103:9000
+2021-11-16 20:36:54,440 FATAL org.apache.hadoop.hdfs.server.datanode.DataNode: Initialization failed for Block pool <registering> (Datanode Uuid unassigned) service to hadoop102/192.168.87.102:9000. Exiting.
+```
+
+3）按doc操作 datanode
+
+```bash
+# 停 datanode
+bin/hdfs dfsadmin -shutdownDatanode <DATANODE_HOST:IPC_PORT> upgrade
+
+bin/hdfs dfsadmin -shutdownDatanode hadoop103:50020 upgrade
+
+# 查看 datanode 状态
+bin/hdfs dfsadmin -getDatanodeInfo hadoop103:50020
+#-----------
+2.168.87.103:50020. Already tried 7 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+21/11/16 20:48:14 INFO ipc.Client: Retrying connect to server: hadoop103/192.168.87.103:50020. Already tried 8 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1000 MILLISECONDS)
+#-----------
+
+# 2.8.2 启动
+sbin/hadoop-daemon.sh start datanode
+```
+
+降级
+
+```bash
+# 2.8.2
+bin/hdfs dfsadmin -shutdownDatanode hadoop103:50020 upgrade
+bin/hdfs dfsadmin -getDatanodeInfo hadoop103:50020
+
+# 2.7.2 启动
+sbin/hadoop-daemon.sh start datanode
+```
+
+**会遇到和上面同样的报错！**
+
+也就是说，datanode 一旦升级就没有回头路了，无法降级
+
+
+
 ### 3.8 Hadoop 进阶命令使用
 
 集群间数据平衡：
